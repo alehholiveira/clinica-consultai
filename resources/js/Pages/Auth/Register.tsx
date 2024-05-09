@@ -12,6 +12,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        role: 'teste'
     });
 
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
+        console.log(errors)
         post(route('register'));
     };
 
