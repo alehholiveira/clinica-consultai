@@ -5,6 +5,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tdd
+      POSTGRES_DB: consultai
     ports:
       - "5432:5432"
