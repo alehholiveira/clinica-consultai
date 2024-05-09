@@ -1,4 +1,15 @@
+version: '3'
+
 services:
+
+  laravel-docker:
+    container_name: laravel-docker
+    build: .
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:80"
+
   postgres:
     image: postgres:latest
     container_name: laravel-container
