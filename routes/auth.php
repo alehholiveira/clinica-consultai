@@ -13,14 +13,6 @@ use App\Http\Controllers\Auth\AppointmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register-paciente', [RegisteredUserController::class, 'createPaciente']) // rota para formulario de criar paciente
-        ->name('register');
-
-    Route::get('register-psicologo', [RegisteredUserController::class, 'createPsicologo']) // rota para formulario de criar psicologo
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']); // rota post para criar tanto paciente quanto psicologo
-
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
@@ -40,8 +32,16 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('register-paciente', [RegisteredUserController::class, 'createPaciente']) // rota para formulario de criar paciente
+        ->name('register-paciente');
+
+    Route::get('register-psicologo', [RegisteredUserController::class, 'createPsicologo']) // rota para formulario de criar psicologo
+        ->name('register-psicologo');
+
+    Route::post('register', [RegisteredUserController::class, 'store']); // rota post para criar tanto paciente quanto psicologo
+
     Route::get('create-consulta', [AppointmentController::class, 'create'])
-    ->name('create-consulta');
+        ->name('create-consulta');
 
     Route::post('create-consulta', [AppointmentController::class, 'store']);
 

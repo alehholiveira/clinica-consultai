@@ -22,12 +22,24 @@ class RegisteredUserController extends Controller
      */
     public function createPsicologo(): Response
     {
-        return Inertia::render('Auth/RegisterPsicologo');
+        $auth = Auth::user();
+
+        if ($auth->role == 'secretaria') {
+            return Inertia::render('Auth/RegisterPsicologo');
+        } else {
+            return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
+        }
     }
 
     public function createPaciente(): Response
     {
-        return Inertia::render('Auth/RegisterPaciente');
+        $auth = Auth::user();
+
+        if ($auth->role == 'secretaria') {
+            return Inertia::render('Auth/RegisterPaciente');
+        } else {
+            return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
+        }
     }
 
     /**
@@ -57,11 +69,10 @@ class RegisteredUserController extends Controller
         ]);
 
         // solução temporaria para salvar username e senha do usuário criado
-        Log::info( 'Nome: '. $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
+        Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
 
         event(new Registered($user));
 
-        Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
     }
