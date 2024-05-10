@@ -6,25 +6,18 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Register() {
+export default function Register({permissao}: {permissao:string}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        role: 'teste'
+        cep: '',
+        numero: '',
+        role: permissao
     });
-
-    useEffect(() => {
-        return () => {
-            reset('password', 'password_confirmation');
-        };
-    }, []);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         console.log(errors)
-        post(route('register'));
+        post('/register');
     };
 
     return (
@@ -49,56 +42,40 @@ export default function Register() {
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                <div>
+                    <InputLabel htmlFor="cep" value="CEP" />
 
                     <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
+                        id="cep"
+                        name="cep"
+                        value={data.cep}
                         className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
+                        autoComplete="name"
+                        isFocused={true}
+                        onChange={(e) => setData('cep', e.target.value)}
                         required
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError message={errors.cep} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                <div>
+                    <InputLabel htmlFor="numero" value="Número de celular" />
 
                     <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
+                        id="numero"
+                        name="numero"
+                        value={data.numero}
                         className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
+                        autoComplete="name"
+                        isFocused={true}
+                        onChange={(e) => setData('numero', e.target.value)}
                         required
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError message={errors.numero} className="mt-2" />
                 </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
+                
 
                 <div className="flex items-center justify-end mt-4">
                     <Link
