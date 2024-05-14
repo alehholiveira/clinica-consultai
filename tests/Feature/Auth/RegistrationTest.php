@@ -9,23 +9,48 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_registration_screen_can_be_rendered(): void
+    public function test_registration_psico_screen_can_be_rendered(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get('/register-psicologo');
 
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_registration_patient_screen_can_be_rendered(): void
+    {
+        $response = $this->get('/register-paciente');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_new_psico_can_register(): void
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'username' => 'User Test',
             'password' => 'password',
             'password_confirmation' => 'password',
-            'cep' => '13087500',
-            'numero' => '18997844864',
-            'role' => 'cliente',
+            'cep' => '11111111',
+            'numero' => '11111111111',
+            'role' => 'psicologo',
+
+
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_new_patient_can_register(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'username' => 'User Test',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'cep' => '11111111',
+            'numero' => '11111111111',
+            'role' => 'paciente',
 
 
         ]);
