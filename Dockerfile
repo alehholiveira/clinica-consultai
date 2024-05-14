@@ -3,6 +3,7 @@ FROM php:8.2.0-apache
 
 WORKDIR /var/www/html
 
+#Copy files
 COPY . .
 
 # Mod Rewrite
@@ -35,6 +36,7 @@ RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
 RUN apt-get install -y curl \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
+
 
 RUN chown -R www-data:www-data /var/www/html/storage
 RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
