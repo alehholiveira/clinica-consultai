@@ -21,8 +21,6 @@ class UserSeeder extends Seeder
             'name' => 'Secretaria Consultaí',
             'username' => 'secretaria',
             'password' => Hash::make('secretaria'),
-            'cep' => '',
-            'numero' => '',
             'role' => 'secretaria',
         ]);
 

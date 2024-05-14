@@ -18,8 +18,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('cep')->nullable();
-            $table->string('numero')->nullable();
+            $table->string('logradouro')->nullable();
+            $table->string('bairro')->nullable();
+            $table->string('localidade')->nullable();
+            $table->string('uf')->nullable();
+            $table->string('celular')->nullable();
             $table->string('role');
         });
 
