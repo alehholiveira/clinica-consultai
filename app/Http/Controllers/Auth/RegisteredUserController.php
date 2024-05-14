@@ -20,23 +20,21 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function createPsicologo(): Response
+    public function redirecionamentoPaciente(): Response
     {
         $auth = Auth::user();
-
         if ($auth->role == 'secretaria') {
-            return Inertia::render('Auth/RegisterPsicologo');
+            return Inertia::render('Auth/RegisterPaciente');
         } else {
             return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
         }
     }
 
-    public function createPaciente(): Response
+    public function redirecionamentoPsicologo(): Response
     {
         $auth = Auth::user();
-
         if ($auth->role == 'secretaria') {
-            return Inertia::render('Auth/RegisterPaciente');
+            return Inertia::render('Auth/RegisterPsicologo');
         } else {
             return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
         }
@@ -47,12 +45,15 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function storePaciente(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'cep' => 'string|max:8|nullable',
-            'numero' => 'string|max:11|nullable',
+            'logradouro' => 'string|max:255',
+            'bairro' => 'string|max:255',
+            'localidade' => 'string|max:255',
+            'uf' => 'string|max:2',
+            'celular' => 'string|max:11',
             'role' => 'required|string'
         ]);
 
@@ -63,8 +64,37 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'username' => $username,
             'password' => Hash::make($password),
-            'cep' => $request->cep,
-            'numero' => $request->numero,
+            'logradouro' => $request->logradouro,
+            'bairro' => $request->bairro,
+            'localidade' => $request->localidade,
+            'uf' => $request->uf,
+            'celular' => $request->celular,
+            'role' => $request->role,
+        ]);
+
+        // solução temporaria para salvar username e senha do usuário criado
+        Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
+
+        event(new Registered($user));
+
+
+        return redirect(route('dashboard', absolute: false));
+    }
+
+    public function storePsicologo(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'role' => 'required|string'
+        ]);
+
+        $username = Str::random(10);
+        $password = Str::random(8);
+
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $username,
+            'password' => Hash::make($password),
             'role' => $request->role,
         ]);
 

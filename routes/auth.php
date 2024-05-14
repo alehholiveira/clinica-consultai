@@ -36,13 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard']) // rota para formulario de criar paciente
         ->name('dashboard');
 
-    Route::get('register-paciente', [RegisteredUserController::class, 'createPaciente']) // rota para formulario de criar paciente
+    Route::get('register-paciente', [RegisteredUserController::class, 'redirecionamentoPaciente']) // rota para formulario de criar paciente
         ->name('register-paciente');
 
-    Route::get('register-psicologo', [RegisteredUserController::class, 'createPsicologo']) // rota para formulario de criar psicologo
+    Route::post('register-paciente', [RegisteredUserController::class, 'storePaciente']); // rota post para criar paciente
+
+    Route::get('register-psicologo', [RegisteredUserController::class, 'redirecionamentoPsicologo']) // rota para formulario de criar psicologo
         ->name('register-psicologo');
 
-    Route::post('register', [RegisteredUserController::class, 'store']); // rota post para criar tanto paciente quanto psicologo
+    Route::post('register-psicologo', [RegisteredUserController::class, 'storePsicologo']); // rota post para criar psicologo
 
     Route::get('create-consulta', [AppointmentController::class, 'create'])
         ->name('create-consulta');
