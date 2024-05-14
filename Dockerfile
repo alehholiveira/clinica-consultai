@@ -3,7 +3,7 @@ FROM php:8.2.0-apache
 
 WORKDIR /var/www/html
 
-#Copy files
+#Copy files.
 COPY . .
 
 # Mod Rewrite
