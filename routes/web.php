@@ -1,9 +1,10 @@
 <?php
-
+use App\Models\User;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Auth\FormularioController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -13,6 +14,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/gerar-documento/{patient_id}/{psychologist_id}', [FormularioController::class, 'gerarDocumento']);
 
 
 Route::middleware('auth')->group(function () {
