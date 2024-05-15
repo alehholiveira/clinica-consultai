@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AppointmentController;
 use App\Http\Controllers\Auth\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\MeetingSessionController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -50,6 +51,11 @@ Route::middleware('auth')->group(function () {
         ->name('create-consulta');
 
     Route::post('create-consulta', [AppointmentController::class, 'store']);
+
+    Route::get('gerar-documento', [MeetingSessionController::class, 'create'])
+        ->name('gerar-documento');
+
+    Route::post('/gerar-documento-rs', [MeetingSessionController::class, 'store']);
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
