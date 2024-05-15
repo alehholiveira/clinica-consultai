@@ -19,6 +19,7 @@ class AppointmentController extends Controller
         $auth = Auth::user();
 
         if ($auth->role == 'secretaria'){
+        
             return Inertia::render('Auth/Appointment', [
                 'auth' => $auth,
                 'patients' => $patients,
