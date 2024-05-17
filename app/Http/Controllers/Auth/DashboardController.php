@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\MeetingSession;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,12 @@ class DashboardController extends Controller
                 'proximasConsultas' => $proximasConsultas
             ]);
         } else if ($auth->role == 'psicologo') {
-            return Inertia::render('DashboardPsicologo');
+            $pacientes = $this->getPacientes($auth->id);
+            $consultas = $this->getConsultas($auth->id);
+            return Inertia::render('DashboardPsicologo', [
+                'pacientes' => $pacientes,
+                'consultas' => $consultas
+            ]);
         } else {
             return Inertia::render('Welcome');
         }
@@ -57,4 +63,34 @@ class DashboardController extends Controller
             ->orderBy('date', 'asc')
             ->get();
     }
+
+    private function getPacientes($psychologist_id)
+    {
+        return Appointment::where('psychologist_id', $psychologist_id)
+            ->with('patient')
+            ->get()
+            ->pluck('patient')
+            ->unique('id');
+    }
+
+    private function getConsultas($psychologist_id)
+    {
+        $consultas = Appointment::where('psychologist_id', $psychologist_id)
+            ->with('patient')
+            ->orderBy('date')
+            ->get();
+    
+        // Adiciona a informação se existe uma MeetingSession para cada consulta
+        foreach ($consultas as $consulta) {
+            $consulta->hasMeetingSession = $this->getMeeting($consulta->id) ? true : false;
+        }
+    
+        return $consultas;
+    }
+    
+    private function getMeeting($appointment_id) 
+    {
+        return MeetingSession::where('appointment_id', $appointment_id)->first();
+    }
+    
 }

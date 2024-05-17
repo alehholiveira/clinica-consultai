@@ -18,6 +18,18 @@ export interface Appointment {
     time: string;
     created_at: string;
     updated_at: string;
+    hasMeetingSession: any
+}
+
+export interface MeetingSession {
+    map: any;
+    id: number;
+    referrals: string
+    attendance_certificates: string
+    meeting_annotation: string
+    appointment_id: number
+    created_at: string;
+    updated_at: string;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {

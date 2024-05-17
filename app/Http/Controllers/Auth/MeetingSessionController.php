@@ -17,24 +17,44 @@ use Illuminate\Support\Facades\File;
 
 class MeetingSessionController extends Controller
 {
-    public function create(): Response
+    public function create($meetingsession_id): Response
     {
         $auth = Auth::user();
 
         if ($auth->role == 'psicologo') {
-            return Inertia::render('Auth/MeetingSession');
+            $meetingSession = MeetingSession::find($meetingsession_id);
+            return Inertia::render('Auth/MeetingSession', [
+                'meetingsession' => $meetingSession
+            ]);
         } else {
             abort(403, 'Acesso negado');
         }
     }
 
-    public function store(Request $request)  
+    public function createMeetingSession(Request $request)  
     {
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id', // adicionar para o request receber informacoes para colocar nos Encaminhamentos e Atestados de atendimento
         ]);
 
         $consulta = Appointment::find($request->appointment_id);
+
+        $meetingSession = MeetingSession::create([
+            'appointment_id' => $consulta->id,
+        ]);
+
+        return redirect(route('dashboard', absolute: false));
+    }
+
+    public function store2(Request $request)  // modificar essa funcao para gerar cada um dos arquivos
+    {
+        $request->validate([
+            'meetingsession_id' => 'required|exists:meeting_sessions,id', // adicionar para o request receber informacoes para colocar nos Encaminhamentos e Atestados de atendimento
+        ]);
+
+        $meetingSession = MeetingSession::find($request->meetingsession_id);
+
+        $consulta = Appointment::find($request->meetingsession_id);
 
         $paciente = $consulta->patient;
         $psicologo = $consulta->psychologist;
@@ -94,12 +114,9 @@ class MeetingSessionController extends Controller
         $encaminhamentoPath = $path . '/encaminhamento.docx';
         $objWriter->save(storage_path($encaminhamentoPath));
 
-        // Criação da MeetingSession
-        $meetingSession = MeetingSession::create([
-            'referrals' => $encaminhamentoPath,
-            'attendance_certificates' => $encaminhamentoPath, // colocar o caminho para o certificado de atendimento posteriormente
-            'appointment_id' => $consulta->id,
-        ]);
+        $meetingSession->referrals = $encaminhamentoPath;
+        $meetingSession->attendance_certificates = $encaminhamentoPath;
+        $meetingSession->save();
 
         return response()->json(['message' => 'Consulta criada com sucesso!', 'meetingsession' => $meetingSession], 201);
     }

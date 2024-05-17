@@ -52,10 +52,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('create-consulta', [AppointmentController::class, 'store']);
 
-    Route::get('gerar-documento', [MeetingSessionController::class, 'create'])
-        ->name('gerar-documento');
+    Route::get('meetingsession/{meetingsession_id}', [MeetingSessionController::class, 'create'])
+        ->name('meetingsession/{meetingsession_id}');
 
-    Route::post('/gerar-documento-rs', [MeetingSessionController::class, 'store']);
+    Route::post('createMeetingSession', [MeetingSessionController::class, 'createMeetingSession']);
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
