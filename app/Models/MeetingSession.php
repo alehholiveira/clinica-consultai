@@ -13,6 +13,7 @@ class MeetingSession extends Model
     protected $fillable = [
         'referrals', // encaminhamentos
         'attendance_certificates', // atestados de atendimentos
+        'meeting_annotation',
         'appointment_id'
     ];
 

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('meeting_sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('referrals'); // encaminhamentos
-            $table->string('attendance_certificates'); // atestados de atendimentos
+            $table->string('referrals')->nullable(); // encaminhamentos
+            $table->string('attendance_certificates')->nullable(); // atestados de atendimentos
+            $table->string('meeting_annotation')->nullable(); 
             $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
