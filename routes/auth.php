@@ -52,8 +52,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('create-consulta', [AppointmentController::class, 'store']);
 
-    Route::get('meetingsession/{meetingsession_id}', [MeetingSessionController::class, 'create'])
-        ->name('meetingsession/{meetingsession_id}');
+    Route::get('appointment/{user_name}/{meetingsession_id}', [MeetingSessionController::class, 'create'])
+        ->name('appointment/{user_name}/{meetingsession_id}');
 
     Route::post('createMeetingSession', [MeetingSessionController::class, 'createMeetingSession']);
 

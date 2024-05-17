@@ -3,18 +3,19 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { User } from "@/types";
+import { User, Appointment,} from "@/types";
 import type { MeetingSession } from "@/types";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
 
-export default function MeetingSession({meetingsession}: {meetingsession: any}) {
+export default function MeetingSession({meetingsession, appointment, }: {meetingsession: MeetingSession, appointment: Appointment,}) {
+    console.log(appointment)
     console.log(meetingsession)
     return (
         <GuestLayout>
         <Head title="Register" />
-        
+
         </GuestLayout>
     );
 }

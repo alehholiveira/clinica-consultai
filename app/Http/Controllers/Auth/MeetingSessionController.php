@@ -15,16 +15,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
 
+
 class MeetingSessionController extends Controller
 {
-    public function create($meetingsession_id): Response
+    public function create($user_name, $appointment_id): Response
     {
         $auth = Auth::user();
 
         if ($auth->role == 'psicologo') {
-            $meetingSession = MeetingSession::find($meetingsession_id);
+            $meetingSession = MeetingSession::where('appointment_id', $appointment_id)->first();
+            $appointment = Appointment::find($appointment_id);
             return Inertia::render('Auth/MeetingSession', [
-                'meetingsession' => $meetingSession
+                'meetingsession' => $meetingSession,
+                'appointment' => $appointment
             ]);
         } else {
             abort(403, 'Acesso negado');
@@ -119,5 +122,10 @@ class MeetingSessionController extends Controller
         $meetingSession->save();
 
         return response()->json(['message' => 'Consulta criada com sucesso!', 'meetingsession' => $meetingSession], 201);
+    }
+
+    private function getMeeting($appointment_id) 
+    {
+        return MeetingSession::where('appointment_id', $appointment_id)->first();
     }
 }
