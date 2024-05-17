@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('createMeetingSession', [MeetingSessionController::class, 'createMeetingSession']);
 
+    Route::post('createMeetingSession/documents', [MeetingSessionController::class, 'store2']);
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
