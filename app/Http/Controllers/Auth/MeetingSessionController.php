@@ -52,12 +52,12 @@ class MeetingSessionController extends Controller
     public function store2(Request $request)  // modificar essa funcao para gerar cada um dos arquivos
     {
         $request->validate([
+            'appointment_id' => 'required|exists:appointments,id',
             'meetingsession_id' => 'required|exists:meeting_sessions,id', // adicionar para o request receber informacoes para colocar nos Encaminhamentos e Atestados de atendimento
         ]);
 
-        $meetingSession = MeetingSession::find($request->meetingsession_id);
-
-        $consulta = Appointment::find($request->meetingsession_id);
+        $meetingSession = MeetingSession::findOrFail($request->meetingsession_id);
+        $consulta = Appointment::findOrFail($request->appointment_id);
 
         $paciente = $consulta->patient;
         $psicologo = $consulta->psychologist;

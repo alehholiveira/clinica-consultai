@@ -35,7 +35,7 @@ export default function Dashboard({ auth, pacientes, consultas }: PageProps<{ pa
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             Dashboard psicologo
-                            {pacientes.map((paciente) => (
+                            {Object.values(pacientes).map((paciente) => (
                                 <div key={paciente.id}>
                                     <h3>{paciente.name}</h3>
                                     <p>
