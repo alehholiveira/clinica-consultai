@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Appointment, PageProps, User } from '@/types';
 import { FormEventHandler, useEffect } from 'react';
 import axios from 'axios';
+import PrimaryButton from '@/Components/PrimaryButton';
 
 
 export default function Dashboard({ auth, pacientes, consultas }: PageProps<{ pacientes: User[], consultas: Appointment[] }>) {
@@ -37,7 +38,16 @@ export default function Dashboard({ auth, pacientes, consultas }: PageProps<{ pa
                             Dashboard psicologo
                             {Object.values(pacientes).map((paciente) => (
                                 <div key={paciente.id}>
-                                    <h3>{paciente.name}</h3>
+                                    <h3>{paciente.name} -
+                                        <PrimaryButton className="ms-4 h-8" disabled={processing} >
+                                            <Link
+                                                href={`/profile/${paciente.id}`}
+                                                className="rounded-md px-3 py-2 text-white ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                                            >
+                                                informacões do paciente
+                                            </Link>
+                                        </PrimaryButton>
+                                    </h3>
                                     <p>
                                         consultas:{" "}
                                         {consultas
