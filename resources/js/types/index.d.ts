@@ -2,10 +2,11 @@ export interface User {
     map: any;
     id: number;
     name: string;
-    email: string;
-    email_verified_at: string;
-    cep: string;
-    numero: string;
+    logradouro: string,
+    bairro: string,
+    localidade: string,
+    uf: string,
+    celular: string,
     role: string;
 }
 
