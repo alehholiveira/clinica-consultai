@@ -18,4 +18,21 @@ class Appointment extends Authenticatable
     {
         return $this->belongsTo(User::class, 'psychologist_id');
     }
+
+    public function meetingSessions()
+    {
+        return $this->hasMany(MeetingSession::class, 'appointment_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($appointment) {
+            // Deleta as sessões de reunião relacionadas
+            $appointment->meetingSessions()->each(function ($meetingSession) {
+                $meetingSession->delete();
+            });
+        });
+    }
 }
