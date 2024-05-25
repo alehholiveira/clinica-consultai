@@ -14,7 +14,9 @@ export interface Appointment {
     map: any;
     id: number;
     patient_id: number;
+    patient: User
     psychologist_id: number;
+    psychologist: User
     date: string;
     time: string;
     created_at: string;
