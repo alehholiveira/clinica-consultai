@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MyEvent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Auth\AppointmentController;
 use App\Http\Controllers\Auth\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\MeetingSessionController;
+
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -33,13 +35,14 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    Route::post('/send',[MailController::class,'send'])->name('mail-send');
-
+    Route::post('/send', [MailController::class, 'send'])->name('mail-send');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard']) // rota para formulario de criar paciente
         ->name('dashboard');
+
+        Route::post('/mark-patient-arrived', [DashboardController::class, 'markPatientArrived']);
 
     Route::get('register-paciente', [RegisteredUserController::class, 'redirecionamentoPaciente']) // rota para formulario de criar paciente
         ->name('register-paciente');

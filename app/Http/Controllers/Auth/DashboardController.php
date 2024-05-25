@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Events\MyEvent;
 
 class DashboardController extends Controller
 {
@@ -19,7 +20,10 @@ class DashboardController extends Controller
         $auth = Auth::user();
 
         if ($auth->role == 'secretaria') {
-            return Inertia::render('Dashboard');
+            $tresproximasConsultas = $this->get3ProximasConsultas();
+            return Inertia::render('Dashboard', [
+                'tresproximasConsultas' => $tresproximasConsultas,
+            ]);
         } else if ($auth->role == 'paciente') {
             $historico = $this->getHistorico($auth->id);
             $proximaConsulta = $this->getProximaConsulta($auth->id);
@@ -73,6 +77,15 @@ class DashboardController extends Controller
             ->unique('id');
     }
 
+    private function get3ProximasConsultas()
+    {
+        return Appointment::where('date', '>=', Carbon::now())
+            ->orderBy('date', 'asc')
+            ->with(['patient', 'psychologist'])
+            ->take(3)
+            ->get();
+    }
+
     private function getConsultas($psychologist_id)
     {
         $consultas = Appointment::where('psychologist_id', $psychologist_id)
@@ -87,6 +100,17 @@ class DashboardController extends Controller
     
         return $consultas;
     }
+
+    public function markPatientArrived(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+        $paciente = $request->name;
+        event(new MyEvent($paciente));
+        return response()->json('Notification sent!');
+    }
+
     
     private function getMeeting($appointment_id) 
     {
