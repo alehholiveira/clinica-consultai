@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,54 +11,79 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): Response
+    public function edit($patient_id): Response
     {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
+        $auth = Auth::user();
+        if ($auth->role == 'psicologo'){
+            $patient = User::where('id', $patient_id)->first();
+            if($patient && $patient->role == 'paciente'){
+                return Inertia::render('Profile/Edit', [
+                    'patient' => $patient,
+                ]);
+            } else {
+                abort(403, 'Paciente não encontrado');
+            }
+        } else {
+            abort(403, 'Acesso negado');
+        }
+
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request, $patient_id): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'logradouro' => 'string|max:255',
+            'bairro' => 'string|max:255',
+            'localidade' => 'string|max:255',
+            'uf' => 'string|max:2',
+            'celular' => 'string|max:11',
+        ]);
+        $patient = User::where('id', $patient_id)->first();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $patient->name = $request->name;
+        $patient->logradouro = $request->logradouro;
+        $patient->bairro = $request->bairro;
+        $patient->localidade = $request->localidade;
+        $patient->uf = $request->uf;
+        $patient->celular = $request->celular;
 
-        $request->user()->save();
+        $patient->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('profile.edit', $patient_id);
     }
 
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy($patient_id)
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        $user = User::findOrFail($patient_id);
 
-        $user = $request->user();
+        DB::transaction(function () use ($user) {
+            // Deleta as appointments do usuário (paciente e psicólogo)
+            $user->appointmentsAsPatient()->each(function ($appointment) {
+                $appointment->delete();
+            });
 
-        Auth::logout();
+            $user->appointmentsAsPsychologist()->each(function ($appointment) {
+                $appointment->delete();
+            });
 
-        $user->delete();
+            // Deleta o usuário
+            $user->delete();
+        });
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect()->route('dashboard')->with('success', 'Usuário deletado com sucesso!');
     }
 }
