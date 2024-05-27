@@ -1,9 +1,8 @@
 FROM php:8.2.0-apache
 
-
 WORKDIR /var/www/html
 
-#Copy files.
+# Copia os arquivos do projeto para o contêiner
 COPY . .
 
 # Mod Rewrite
@@ -19,12 +18,10 @@ RUN apt-get update -y && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
-    libpng-dev \
-    libpq-dev  # Adicione esta linha
+    libpq-dev
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
 
 # PHP Extension
 RUN docker-php-ext-install gettext intl pdo_pgsql gd
@@ -37,6 +34,9 @@ RUN apt-get install -y curl \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
+# Configuração do Apache
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
+# Permissões para storage e bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage
 RUN chown -R www-data:www-data /var/www/html/bootstrap/cache

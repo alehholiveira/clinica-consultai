@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: consultai-laravel
-        image: clinica-consultai_laravel-docker
+        image: clinica-consultai-laravel-docker
         imagePullPolicy: Never
         resources:
           limits:
