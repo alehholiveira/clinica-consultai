@@ -3,17 +3,12 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { BiUser } from "react-icons/bi";
 import { AiOutlineLock } from "react-icons/ai";
+import InputError from "@/Components/InputError";
 
-export default function Login({
-    status,
-    canResetPassword,
-}: {
-    status?: string;
-    canResetPassword: boolean;
-}) {
+export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: "",
-        password: "",
+        username: '',
+        password: '',
         remember: false,
     });
 
@@ -38,19 +33,20 @@ export default function Login({
                 <form onSubmit={submit}>
                     <div className="relative my-4">
                         <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
+                            id="username"
+                            type="username"
+                            name="username"
+                            value={data.username}
                             className="block w-72 py-2.3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-indigo-500 appearnce-none dark:focus:border-blue-500 focus: outline-none focus:ring-0 focus:text-black focus:border-blue-600 peer"
                             autoComplete="username"
-                            onChange={(e) => setData("email", e.target.value)}
+                            onChange={(e) => setData("username", e.target.value)}
                         />
+                        <InputError message={errors.username} className="mt-2" />
                         <label
                             htmlFor=""
                             className="absolute text-sm text-black duration-300  transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer placeholder-shown:scale-100 peer-placeholder-shown:trasnlate-y-0 peer-focus:sacale-75 peer-focus:-translate-y-6 "
                         >
-                            Email
+                            Username
                         </label>
                         <BiUser className=" absolute top-4 right-4" />
                     </div>
@@ -67,7 +63,7 @@ export default function Login({
                                 setData("password", e.target.value)
                             }
                         />
-
+                        <InputError message={errors.password} className="mt-2" />
                         <label
                             htmlFor=""
                             className="absolute text-sm text-indigo-500 duration-300  transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer placeholder-shown:scale-100 peer-placeholder-shown:trasnlate-y-0 peer-focus:sacale-75 peer-focus:-translate-y-6 "
