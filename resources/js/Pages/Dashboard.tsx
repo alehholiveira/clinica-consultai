@@ -2,8 +2,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { Appointment, PageProps, User } from '@/types';
 import axios from 'axios';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-export default function Dashboard({ auth, tresproximasConsultas}: PageProps<{ tresproximasConsultas: Appointment[]}>) {
+export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ tresproximasConsultas: Appointment[] }>) {
     const Submit = async (patientName: string, e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
@@ -21,6 +23,11 @@ export default function Dashboard({ auth, tresproximasConsultas}: PageProps<{ tr
         }
     };
 
+    const formatDateTime = (dateString: string, timeString: string) => {
+        const date = new Date(`${dateString}T${timeString}`);
+        return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -30,42 +37,67 @@ export default function Dashboard({ auth, tresproximasConsultas}: PageProps<{ tr
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">Dashboard secretaria</div>
-                        <Link
-                            href={route('register-paciente')}
-                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                        >
-                            Criar Paciente
-                        </Link>
-                        <Link
-                            href={route('register-psicologo')}
-                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                        >
-                            Criar Psicologo
-                        </Link>
-                        <Link
-                            href={route('create-consulta')}
-                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                        >
-                            Criar consulta
-                        </Link>
-                        <div className="mt-6">
-                            <h3 className="font-semibold text-lg">Próximas Consultas</h3>
-                            <div className="space-y-4">
-                                {tresproximasConsultas.map((consulta) => (
-                                    <div key={consulta.id} className="p-4 bg-gray-100 rounded shadow">
-                                        <p><strong>Paciente:</strong> {consulta.patient.name}</p>
-                                        <p><strong>Psicólogo:</strong> {consulta.psychologist.name}</p>
-                                        <p><strong>Data:</strong> {consulta.date} / {consulta.time}</p>
-                                        <button
-                                            onClick={(e) => Submit(consulta.patient.name, e)}
-                                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                                        >
-                                            Notificar Psicólogo
-                                        </button>
-                                    </div>
-                                ))}
+                        <div className="m-8">
+                            <div className="flex justify-between items-center mb-4">
+                                <h1 className="text-2xl font-bold bg-transparent">
+                                    Próximas Consultas Agendadas
+                                </h1>
+                                <div className="lg:flex">
+                                    <Link
+                                        href="/register"
+                                        className="bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-3 border-white text-white rounded-md"
+                                    >
+                                        Cadastrar Paciente / Psicólogo
+                                    </Link>
+                                </div>
                             </div>
+                        </div>
+                        <div className="m-4 overflow-hidden rounded-xl shadow-lg">
+                            <table className="min-w-full table-auto bg-white border border-gray-200 rounded-xl">
+                                <thead>
+                                    <tr className="bg-gray-200">
+                                        <th className="px-4 py-2 border border-gray-300 first:rounded-tl-xl last:rounded-tr-xl">
+                                            NOME
+                                        </th>
+                                        <th className="px-4 py-2 border border-gray-300">
+                                            ENDEREÇO
+                                        </th>
+                                        <th className="px-4 py-2 border border-gray-300">
+                                            CONTATO
+                                        </th>
+                                        <th className="px-4 py-2 border border-gray-300">
+                                            HORÁRIO
+                                        </th>
+                                        <th className="px-4 py-2 border border-gray-300">
+                                            CHEGADA
+                                        </th>
+                                    </tr>
+                                </thead>
+                                {tresproximasConsultas.map((consulta) => (
+                                    <tbody key={consulta.id}>
+                                        <tr className="hover:bg-gray-50">
+                                            <td className="px-4 py-2 border border-gray-300">
+                                                {consulta.patient.name}
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                                {consulta.patient.logradouro}
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                                {consulta.patient.celular}
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                            {formatDateTime(consulta.date, consulta.time)}
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300 text-center">
+                                                <button onClick={(e) => Submit(consulta.patient.name, e)}
+                                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                                                    CONFIRMAR
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                ))}
+                            </table>
                         </div>
                     </div>
                 </div>
