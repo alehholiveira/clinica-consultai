@@ -47,7 +47,7 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                         href="/register"
                                         className="bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-3 border-white text-white rounded-md"
                                     >
-                                        Cadastrar Paciente / Psicólogo
+                                        Página de Cadastro
                                     </Link>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                 <thead>
                                     <tr className="bg-gray-200">
                                         <th className="px-4 py-2 border border-gray-300 first:rounded-tl-xl last:rounded-tr-xl">
-                                            NOME
+                                            PACIENTE
                                         </th>
                                         <th className="px-4 py-2 border border-gray-300">
                                             ENDEREÇO
@@ -67,6 +67,9 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                         </th>
                                         <th className="px-4 py-2 border border-gray-300">
                                             HORÁRIO
+                                        </th>
+                                        <th className="px-4 py-2 border border-gray-300">
+                                            PSICÓLOGO
                                         </th>
                                         <th className="px-4 py-2 border border-gray-300">
                                             CHEGADA
@@ -87,6 +90,9 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
                                             {formatDateTime(consulta.date, consulta.time)}
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                            {consulta.psychologist.name}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300 text-center">
                                                 <button onClick={(e) => Submit(consulta.patient.name, e)}
