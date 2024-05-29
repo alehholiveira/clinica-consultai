@@ -20,23 +20,13 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function redirecionamentoPaciente(): Response
+    public function view(): Response
     {
         $auth = Auth::user();
         if ($auth->role == 'secretaria') {
-            return Inertia::render('Auth/RegisterPaciente');
+            return Inertia::render('Auth/Register');
         } else {
-            return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
-        }
-    }
-
-    public function redirecionamentoPsicologo(): Response
-    {
-        $auth = Auth::user();
-        if ($auth->role == 'secretaria') {
-            return Inertia::render('Auth/RegisterPsicologo');
-        } else {
-            return Inertia::render('Welcome'); // verificar se é possivel redirecionar para outra coisa
+            abort(403, 'Acesso negado');
         }
     }
 
