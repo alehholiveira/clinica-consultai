@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Appointment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,14 +15,14 @@ class MyEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $paciente;
+    public Appointment $appointment;
 
     /**
      * @return void
      */
-    public function __construct($paciente)
+    public function __construct($appointment)
     {
-        $this->paciente = $paciente;
+        $this->appointment = $appointment;
     }
 
     /**

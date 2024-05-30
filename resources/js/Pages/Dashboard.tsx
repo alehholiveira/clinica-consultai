@@ -6,20 +6,20 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ tresproximasConsultas: Appointment[] }>) {
-    const Submit = async (patientName: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    const Submit = async (consultaid: number, e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
         try {
-            const response = await axios.post('/mark-patient-arrived', { name: patientName }, {
+            const response = await axios.post('/mark-patient-arrived', { appointment_id: consultaid }, {
                 headers: {
                     'X-CSRF-TOKEN': token,
                 },
             });
             console.log(response.data);
         } catch (error) {
-            console.error('There was an error!', error);
+            console.error(error);
         }
     };
 
@@ -95,7 +95,7 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                             {consulta.psychologist.name}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300 text-center">
-                                                <button onClick={(e) => Submit(consulta.patient.name, e)}
+                                                <button onClick={(e) => Submit(consulta.id, e)}
                                                     className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
                                                     CONFIRMAR
                                                 </button>

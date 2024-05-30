@@ -104,12 +104,18 @@ class DashboardController extends Controller
     public function markPatientArrived(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'appointment_id' => 'required',
         ]);
-        $paciente = $request->name;
-        event(new MyEvent($paciente));
-        return response()->json('Notification sent!');
+    
+        $consulta = Appointment::find($request->appointment_id);
+        if (!$consulta) {
+            return response()->json(['error' => 'Consulta não encontrada'], 404);
+        }
+    
+        event(new MyEvent($consulta));
+        return response()->json('Chegada confirmada!');
     }
+    
 
     
     private function getMeeting($appointment_id) 
