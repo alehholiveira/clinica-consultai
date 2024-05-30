@@ -49,6 +49,8 @@ class DashboardController extends Controller
     {
         return Appointment::where('patient_id', $patient_id)
             ->where('date', '<', Carbon::now())
+            ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc')
             ->get();
     }
 
@@ -57,6 +59,7 @@ class DashboardController extends Controller
         return Appointment::where('patient_id', $patient_id)
             ->where('date', '>=', Carbon::now())
             ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc')
             ->first();
     }
 
@@ -65,6 +68,7 @@ class DashboardController extends Controller
         return Appointment::where('patient_id', $patient_id)
             ->where('date', '>=', Carbon::now())
             ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc')
             ->get();
     }
 
