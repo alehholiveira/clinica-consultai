@@ -51,6 +51,7 @@ class DashboardController extends Controller
             ->where('date', '<', Carbon::now())
             ->orderBy('date', 'asc')
             ->orderBy('time', 'asc')
+            ->with(['patient', 'psychologist'])
             ->get();
     }
 
@@ -60,6 +61,7 @@ class DashboardController extends Controller
             ->where('date', '>=', Carbon::now())
             ->orderBy('date', 'asc')
             ->orderBy('time', 'asc')
+            ->with(['patient', 'psychologist'])
             ->first();
     }
 
@@ -69,6 +71,7 @@ class DashboardController extends Controller
             ->where('date', '>=', Carbon::now())
             ->orderBy('date', 'asc')
             ->orderBy('time', 'asc')
+            ->with(['patient', 'psychologist'])
             ->get();
     }
 

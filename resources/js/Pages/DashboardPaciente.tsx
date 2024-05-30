@@ -8,7 +8,7 @@ import { ptBR } from 'date-fns/locale';
 export default function Dashboard({ auth, historico, proximaConsulta, proximasConsultas }: PageProps<{ historico: Appointment[], proximaConsulta: Appointment, proximasConsultas: Appointment[] }>) {
     const formatDateTime = (dateString: string, timeString: string) => {
         const date = new Date(`${dateString}T${timeString}`);
-        return format(date, "dd/MM/yyyy", { locale: ptBR });
+        return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
     };
     return (
         <AuthenticatedLayout
@@ -22,14 +22,14 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                         <div className="m-8">
                             <div className="flex justify-between items-center mb-4">
                                 <h1 className="text-2xl font-bold bg-trasparet">
-                                    CONSULTAS
+                                    Suas Consultas!
                                 </h1>
                                 <div className="hidden lg:flex">
                                     <a
                                         href="/create-consulta"
                                         className="bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-3 border-white text-white rounded-md"
                                     >
-                                        MARCAR CONSULTA
+                                        Agendar Consulta
                                     </a>
                                 </div>
                             </div>
@@ -37,12 +37,12 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                         <div className="m-4 overflow-hidden rounded-xl shadow-lg">
                             <table className="min-w-full table-auto bg-white border border-gray-200 rounded-xl">
                                 <thead>
-                                    <tr className="bg-sky-400">
+                                    <tr className="bg-gradient-to-r from-sky-500  to-indigo-500">
                                         <th className="px-4 py-2 border border-SKY-300">
                                             DATA
                                         </th>
                                         <th className="px-4 py-2 border border-gray-300">
-                                            HORARIO
+                                            PSICÓLOGO
                                         </th>
                                     </tr>
                                 </thead>
@@ -50,7 +50,7 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                     <tr>
                                         <td
                                             colSpan={2}
-                                            className="bg-blue-300 text-center font-semibold py-2 border-t border-gray-300"
+                                            className="bg-gray-200 text-center font-semibold py-2 border-t border-gray-300"
                                         >
                                             PRÓXIMA CONSULTA
                                         </td>
@@ -61,14 +61,14 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                                 {formatDateTime(proximaConsulta.date, proximaConsulta.time)}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
-                                                {proximaConsulta.time}
+                                                {proximaConsulta.psychologist.name}
                                             </td>
                                         </tr>
                                     )}
                                     <tr>
                                         <td
                                             colSpan={2}
-                                            className="bg-blue-300 text-center font-semibold py-2 border-t border-gray-300"
+                                            className="bg-gray-200 text-center font-semibold py-2 border-t border-gray-300"
                                         >
                                             PRÓXIMAS CONSULTAS
                                         </td>
@@ -81,16 +81,16 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                                     {formatDateTime(consulta.date, consulta.time)}
                                                 </td>
                                                 <td className="px-4 py-2 border border-gray-300">
-                                                    {consulta.time}
+                                                    {consulta.psychologist.name}
                                                 </td>
                                             </tr>
                                         ))}
                                     <tr>
                                         <td
                                             colSpan={2}
-                                            className="bg-blue-200 text-center font-semibold py-2 border-t border-gray-300"
+                                            className="bg-gray-200 text-center font-semibold py-2 border-t border-gray-300"
                                         >
-                                            HISTORICO DE CONSULTAS
+                                            HISTÓRICO DE CONSULTAS
                                         </td>
                                     </tr>
                                     {historico.map((consulta, index) => (
@@ -99,7 +99,7 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                                 {formatDateTime(consulta.date, consulta.time)}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
-                                                {consulta.time}
+                                                {consulta.psychologist.name}
                                             </td>
                                         </tr>
                                     ))}
