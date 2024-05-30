@@ -68,7 +68,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard'));
     }
 
     public function storePsicologo(Request $request): RedirectResponse
@@ -94,6 +94,6 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard'));
     }
 }
