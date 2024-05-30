@@ -20,9 +20,9 @@ class DashboardController extends Controller
         $auth = Auth::user();
 
         if ($auth->role == 'secretaria') {
-            $tresproximasConsultas = $this->get3ProximasConsultas();
+            $ConsultasNoDiaDeHoje = $this->ConsultasNoDiaDeHoje();
             return Inertia::render('Dashboard', [
-                'tresproximasConsultas' => $tresproximasConsultas,
+                'ConsultasNoDiaDeHoje' => $ConsultasNoDiaDeHoje,
             ]);
         } else if ($auth->role == 'paciente') {
             $historico = $this->getHistorico($auth->id);
@@ -81,12 +81,12 @@ class DashboardController extends Controller
             ->unique('id');
     }
 
-    private function get3ProximasConsultas()
+    private function ConsultasNoDiaDeHoje()
     {
-        return Appointment::where('date', '>=', Carbon::now())
+        return Appointment::where('date', '=', Carbon::now())
             ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc')
             ->with(['patient', 'psychologist'])
-            ->take(3)
             ->get();
     }
 

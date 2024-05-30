@@ -7,7 +7,7 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ tresproximasConsultas: Appointment[] }>) {
+export default function Dashboard({ auth, ConsultasNoDiaDeHoje }: PageProps<{ ConsultasNoDiaDeHoje: Appointment[] }>) {
     const Submit = async (consultaid: number, e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
@@ -52,7 +52,7 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                         <div className="m-8">
                             <div className="flex justify-between items-center mb-4">
                                 <h1 className="text-2xl font-bold bg-transparent">
-                                    Próximas Consultas Agendadas
+                                    Consultas Agendadas no dia de hoje!
                                 </h1>
                                 <div className="lg:flex">
                                     <Link
@@ -88,7 +88,7 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                                         </th>
                                     </tr>
                                 </thead>
-                                {tresproximasConsultas.map((consulta) => (
+                                {ConsultasNoDiaDeHoje.map((consulta) => (
                                     <tbody key={consulta.id}>
                                         <tr className="hover:bg-gray-50">
                                             <td className="px-4 py-2 border border-gray-300">
