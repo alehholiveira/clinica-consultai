@@ -6,8 +6,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export default function Dashboard({ auth, historico, proximaConsulta, proximasConsultas }: PageProps<{ historico: Appointment[], proximaConsulta: Appointment, proximasConsultas: Appointment[] }>) {
-    const formatDate = (dateString: string) => {
-        const date = new Date(`${dateString}`);
+    const formatDateTime = (dateString: string, timeString: string) => {
+        const date = new Date(`${dateString}T${timeString}`);
         return format(date, "dd/MM/yyyy", { locale: ptBR });
     };
     return (
@@ -58,7 +58,7 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                     {proximaConsulta && (
                                         <tr className="hover:bg-gray-50">
                                             <td className="px-4 py-2 border border-gray-300">
-                                                {formatDate(proximaConsulta.date)}
+                                                {formatDateTime(proximaConsulta.date, proximaConsulta.time)}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
                                                 {proximaConsulta.time}
@@ -73,16 +73,18 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                             PRÓXIMAS CONSULTAS
                                         </td>
                                     </tr>
-                                    {proximasConsultas.map((consulta, index) => (
-                                        <tr className="hover:bg-gray-50" key={index} >
-                                            <td className="px-4 py-2 border border-gray-300">
-                                                {formatDate(consulta.date)}
-                                            </td>
-                                            <td className="px-4 py-2 border border-gray-300">
-                                                {consulta.time}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {proximasConsultas
+                                        .filter(consulta => consulta.date !== proximaConsulta.date || consulta.time !== proximaConsulta.time)
+                                        .map((consulta, index) => (
+                                            <tr className="hover:bg-gray-50" key={index}>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    {formatDateTime(consulta.date, consulta.time)}
+                                                </td>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    {consulta.time}
+                                                </td>
+                                            </tr>
+                                        ))}
                                     <tr>
                                         <td
                                             colSpan={2}
@@ -94,7 +96,7 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                     {historico.map((consulta, index) => (
                                         <tr className="hover:bg-gray-50" key={index}>
                                             <td className="px-4 py-2 border border-gray-300">
-                                                {formatDate(consulta.date)}
+                                                {formatDateTime(consulta.date, consulta.time)}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
                                                 {consulta.time}
