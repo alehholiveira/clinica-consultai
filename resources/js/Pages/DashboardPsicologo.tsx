@@ -5,12 +5,19 @@ import { FormEventHandler, useEffect } from 'react';
 import axios from 'axios';
 import PrimaryButton from '@/Components/PrimaryButton';
 import { GetNotification } from './../Components/GetNotification';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale/pt-BR';
 
 
 export default function Dashboard({ auth, pacientes, consultas }: PageProps<{ pacientes: User[], consultas: Appointment[] }>) {
     const { data, setData, post, processing, errors, reset } = useForm({
         appointment_id: ''
     });
+
+    const formatDateTime = (dateString: string, timeString: string) => {
+        const date = new Date(`${dateString}T${timeString}`);
+        return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    };
 
     const submit = (consultaId: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -56,7 +63,7 @@ export default function Dashboard({ auth, pacientes, consultas }: PageProps<{ pa
                                             .filter((consulta) => consulta.patient_id === paciente.id)
                                             .map((consulta) => (
                                                 <span key={consulta.id}>
-                                                    <br />{new Date(consulta.date).toLocaleDateString()} -
+                                                    <br />{formatDateTime(consulta.date, consulta.time)} -
 
                                                     {!consulta.hasMeetingSession && (
 

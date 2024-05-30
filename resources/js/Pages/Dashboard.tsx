@@ -4,6 +4,8 @@ import { Appointment, PageProps, User } from '@/types';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ tresproximasConsultas: Appointment[] }>) {
     const Submit = async (consultaid: number, e: React.MouseEvent<HTMLButtonElement>) => {
@@ -18,6 +20,16 @@ export default function Dashboard({ auth, tresproximasConsultas }: PageProps<{ t
                 },
             });
             console.log(response.data);
+            toast.success('A chegada do paciente foi confirmada!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         } catch (error) {
             console.error(error);
         }
