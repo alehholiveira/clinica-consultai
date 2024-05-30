@@ -54,6 +54,9 @@ Route::middleware('auth')->group(function () {
     Route::get('create-consulta', [AppointmentController::class, 'create'])
         ->name('create-consulta');
 
+    Route::get('/available-times', [AppointmentController::class, 'getAvailableTimes']);
+
+
     Route::post('create-consulta', [AppointmentController::class, 'store']);
 
     Route::get('appointment/{user_name}/{meetingsession_id}', [MeetingSessionController::class, 'create'])
