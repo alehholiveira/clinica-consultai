@@ -18,7 +18,7 @@ class AppointmentController extends Controller
         $psychologists = User::where('role', 'psicologo')->get();
         $auth = Auth::user();
 
-        if ($auth->role == 'secretaria'){
+        if ($auth->role == 'paciente'){
         
             return Inertia::render('Auth/Appointment', [
                 'auth' => $auth,
@@ -26,7 +26,7 @@ class AppointmentController extends Controller
                 'psychologists' => $psychologists,
             ]);
         } else {
-            return Inertia::render('Dashboard'); // dar uma olhada melhor nisso, ver se é possivel direcionar para a roda de dashboard, em vez de componente
+            abort(403, 'Acesso negado');
         }
         
     }
