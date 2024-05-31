@@ -114,7 +114,8 @@ class DashboardController extends Controller
             'appointment_id' => 'required',
         ]);
     
-        $consulta = Appointment::find($request->appointment_id);
+        $consulta = Appointment::with(['patient', 'psychologist'])
+        ->find($request->appointment_id);
         if (!$consulta) {
             return response()->json(['error' => 'Consulta não encontrada'], 404);
         }
