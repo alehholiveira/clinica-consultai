@@ -4,16 +4,22 @@ import { PageProps, User } from "@/types";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import axios from 'axios';
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'; // Importe o plugin
+
+dayjs.extend(isSameOrBefore); // Registre o plugin
 
 export default function AppointmentForm({ auth, psychologists }: PageProps<{ psychologists: User[] }>) {
     const { data, setData, post, processing, errors, reset } = useForm({
         date: '',
         time: '',
-        patient_id: auth.id,
+        patient_id: auth.id,  // Corrigido aqui
         psychologist_id: ''
     });
 
     const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+    const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
+    const [selectedWeekStart, setSelectedWeekStart] = useState(dayjs().startOf('week').format('YYYY-MM-DD'));
 
     const fetchAvailableTimes = async () => {
         if (data.date && data.psychologist_id) {
@@ -42,58 +48,99 @@ export default function AppointmentForm({ auth, psychologists }: PageProps<{ psy
         post('/create-consulta');
     };
 
-    // Obtendo a data atual no formato YYYY-MM-DD
-    const today = new Date().toISOString().split('T')[0];
+    const today = dayjs().startOf('day');
+
+    const handlePreviousWeek = () => {
+        const newWeekStart = dayjs(selectedWeekStart).subtract(1, 'week').format('YYYY-MM-DD');
+        setSelectedWeekStart(newWeekStart);
+    };
+
+    const handleNextWeek = () => {
+        const newWeekStart = dayjs(selectedWeekStart).add(1, 'week').format('YYYY-MM-DD');
+        setSelectedWeekStart(newWeekStart);
+    };
 
     return (
-        <div className="max-w-md mx-auto bg-white p-8 mt-10 shadow-md rounded-md">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Agendar Consulta</h2>
-            <form onSubmit={submit} className="space-y-4">
-                <div>
-                    <label className="block text-gray-700">Data:</label>
-                    <input
-                        type="date"
-                        value={data.date}
-                        onChange={(e) => setData('date', e.target.value)}
-                        required
-                        min={today} // Definindo a data mínima como hoje
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-700">Psicólogo:</label>
-                    <select
-                        value={data.psychologist_id}
-                        onChange={(e) => setData('psychologist_id', e.target.value)}
-                        required
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        <form onSubmit={submit} className="space-y-4">
+            <div className="max-w-md mx-auto bg-gray-900 p-8 mt-10 shadow-md rounded-md text-white">
+                <h2 className="text-2xl font-bold mb-6 text-center">Agendar Consulta</h2>
+                <div className="flex justify-between mb-4">
+                    <button
+                        type="button"
+                        className="text-gray-400"
+                        onClick={handlePreviousWeek}
+                        disabled={dayjs(selectedWeekStart).isSameOrBefore(today, 'week')}
                     >
-                        <option value="">Selecione um psicólogo</option>
+                        &larr;
+                    </button>
+                    <span>{dayjs(selectedWeekStart).format('MMMM/YYYY')}</span>
+                    <button
+                        type="button"
+                        className="text-gray-400"
+                        onClick={handleNextWeek}
+                    >
+                        &rarr;
+                    </button>
+                </div>
+                <div className="grid grid-cols-7 gap-2 mb-6">
+                    {[...Array(7)].map((_, index) => {
+                        const day = dayjs(selectedWeekStart).add(index, 'day').startOf('day');
+                        const isPastDay = day.isBefore(today);
+
+                        return (
+                            <button
+                                type="button"
+                                key={index}
+                                className={`py-2  ${day.isSame(selectedDate, 'day') ? 'bg-blue-600' : 'bg-gray-700 hover:bg-blue-900 '} rounded-md ${isPastDay ? 'opacity-50 cursor-not-allowed ' : ''}`}
+                                onClick={() => {
+                                    if (!isPastDay) {
+                                        setSelectedDate(day.format('YYYY-MM-DD'));
+                                        setData('date', day.format('YYYY-MM-DD'));
+                                    }
+                                }}
+                                disabled={isPastDay}
+                            >
+                                {day.format('DD')}
+                            </button>
+                        );
+                    })}
+                </div>
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Selecione um profissional</h3>
+                    <div className="flex flex-wrap space-x-2">
                         {psychologists.map((psychologist: User) => (
-                            <option key={psychologist.id} value={psychologist.id}>{psychologist.name}</option>
+                            <button
+                                type="button"
+                                key={psychologist.id}
+                                className={`flex flex-col items-center p-2 hover:bg-yellow-700 ${data.psychologist_id === String(psychologist.id) ? 'border border-yellow-500'  : ''}`}
+                                onClick={() => setData('psychologist_id', String(psychologist.id))}
+                            >
+                                <span>{psychologist.name}</span>
+                            </button>
                         ))}
-                    </select>
+                    </div>
                 </div>
                 <div>
-                    <label className="block text-gray-700">Hora:</label>
-                    <select
-                        value={data.time}
-                        onChange={(e) => setData('time', e.target.value)}
-                        required
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    >
-                        <option value="">Selecione um horário</option>
+                    <h3 className="text-lg font-semibold mb-2">Horários disponíveis</h3>
+                    <div className="flex flex-wrap space-x-2">
                         {availableTimes.map((time) => (
-                            <option key={time} value={time}>{time}</option>
+                            <button
+                                type="button"
+                                key={time}
+                                className={`py-2 px-4 border ${data.time === time ? 'border-blue-500' : 'border-gray-700 hover:bg-gray-700'} rounded-md`}
+                                onClick={() => setData('time', time)}
+                            >
+                                {time}
+                            </button>
                         ))}
-                    </select>
+                    </div>
                 </div>
-                <div className="text-center">
-                    <PrimaryButton className="w-full" disabled={processing}>
+                <div className="text-center mt-6">
+                    <PrimaryButton className="w-full" type="submit" disabled={processing}>
                         Criar consulta
                     </PrimaryButton>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     );
 }
