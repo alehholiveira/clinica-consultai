@@ -12,21 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
-    public function create(): Response
-    {
-        $psychologists = User::where('role', 'psicologo')->get();
-        $auth = Auth::user();
-
-        if ($auth->role == 'paciente') {
-            return Inertia::render('Auth/Appointment', [
-                'auth' => $auth,
-                'psychologists' => $psychologists,
-            ]);
-        } else {
-            abort(403, 'Acesso negado');
-        }
-    }
-
     public function store(Request $request)
     {
         $request->validate([

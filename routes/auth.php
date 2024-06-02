@@ -51,11 +51,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('register-psicologo', [RegisteredUserController::class, 'storePsicologo']); // rota post para criar psicologo
 
-    Route::get('create-consulta', [AppointmentController::class, 'create'])
-        ->name('create-consulta');
-
     Route::get('/available-times', [AppointmentController::class, 'getAvailableTimes']);
-
 
     Route::post('create-consulta', [AppointmentController::class, 'store']);
 

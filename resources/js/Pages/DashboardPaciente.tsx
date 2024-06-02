@@ -1,11 +1,12 @@
-import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps, Appointment } from '@/types';
+import { Head } from '@inertiajs/react';
+import { PageProps, Appointment, User } from '@/types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import * as Dialog from '@radix-ui/react-dialog';
+import AppointmentDialog from '@/Components/AppointmentDialog';
 
-export default function Dashboard({ auth, historico, proximaConsulta, proximasConsultas }: PageProps<{ historico: Appointment[], proximaConsulta: Appointment, proximasConsultas: Appointment[] }>) {
+export default function Dashboard({ auth, historico, proximaConsulta, proximasConsultas, psychologists }: PageProps<{ historico: Appointment[], proximaConsulta: Appointment, proximasConsultas: Appointment[], psychologists: User[] }>) {
     const formatDateTime = (dateString: string, timeString: string) => {
         const date = new Date(`${dateString}T${timeString}`);
         return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
@@ -25,12 +26,9 @@ export default function Dashboard({ auth, historico, proximaConsulta, proximasCo
                                     Suas Consultas!
                                 </h1>
                                 <div className="hidden lg:flex">
-                                    <a
-                                        href="/create-consulta"
-                                        className="bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-3 border-white text-white rounded-md"
-                                    >
-                                        Agendar Consulta
-                                    </a>
+                                <Dialog.Root>
+                                    <AppointmentDialog auth= {auth} psychologists={psychologists} />
+                                </Dialog.Root>
                                 </div>
                             </div>
                         </div>

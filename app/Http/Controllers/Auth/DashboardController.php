@@ -28,10 +28,12 @@ class DashboardController extends Controller
             $historico = $this->getHistorico($auth->id);
             $proximaConsulta = $this->getProximaConsulta($auth->id);
             $proximasConsultas = $this->getProximasConsultas($auth->id);
+            $psychologists = User::where('role', 'psicologo')->get();
             return Inertia::render('DashboardPaciente', [
                 'historico' => $historico,
                 'proximaConsulta' => $proximaConsulta,
-                'proximasConsultas' => $proximasConsultas
+                'proximasConsultas' => $proximasConsultas,
+                'psychologists' => $psychologists
             ]);
         } else if ($auth->role == 'psicologo') {
             $pacientes = $this->getPacientes($auth->id);
