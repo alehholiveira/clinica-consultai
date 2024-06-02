@@ -154,7 +154,7 @@ export default function Welcome({
                     </p>
                     <div className="flex justify-center my-10">
                         <a
-                            href="#"
+                            href="#contato"
                             className="bg-gradient-to-r from-indigo-500 to-sky-500 py-4 px-4 mx-3 rounded-md"
                         >
                             AGENDE SUA CONSULTA
@@ -323,7 +323,7 @@ export default function Welcome({
                                 </p>
                             </div>
                         </div>
-                        <div className="px-4 sm:w-full lg:w-full h-full mx-auto mt-8">
+                        <div className="px-4 sm:w-full lg:w-full h-full mx-auto mt-8" id="contato">
                             <div className="rounded-lg shadow-lg bg-sky-600 py-10 md:py-12 px-4 md:px-6">
                                 <h2 className="text-3xl text-center text-white font-bold mb-6">
                                     ENTRE EM CONTATO
