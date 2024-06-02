@@ -6,6 +6,8 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Appointment } from "@/types";
 import type { MeetingSession, PageProps } from "@/types";
 import { Head, useForm } from "@inertiajs/react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { FormEventHandler } from "react";
 
 export default function MeetingSession({
@@ -35,6 +37,11 @@ export default function MeetingSession({
         post("/appointment/documents/info");
     };
 
+    const formatDateTime = (dateString: string, timeString: string) => {
+        const date = new Date(`${dateString}T${timeString}`);
+        return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    };
+    
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -56,10 +63,10 @@ export default function MeetingSession({
                             Detalhes da Consulta
                         </h3>
                         <p>
-                            <strong>Paciente:</strong> {appointment.patient_id}
+                            <strong>Paciente:</strong> {appointment.patient.name}
                         </p>
                         <p>
-                            <strong>Hora:</strong> {appointment.time}
+                            <strong>Data:</strong> {formatDateTime(appointment.date, appointment.time)}
                         </p>
                     </div>
 
@@ -73,7 +80,7 @@ export default function MeetingSession({
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
                                     onClick={submitEncaminhamento()}
                                 >
-                                    Criar Encaminhamento
+                                    Gerar Encaminhamento
                                 </button>
                             </div>
                             <div className="flex-1">
@@ -81,10 +88,10 @@ export default function MeetingSession({
                                     Informações sobre atestado.
                                 </p>
                                 <button
-                                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
                                     onClick={submitAtestado()}
                                 >
-                                    Criar Atestado
+                                    Gerar Atestado
                                 </button>
                             </div>
                         </div>
