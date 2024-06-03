@@ -286,7 +286,7 @@ class MeetingSessionController extends Controller
         $meetingSession->meeting_annotation = $encaminhamentoPath;
         $meetingSession->save();
 
-        return response()->json(['message' => 'Informações sobre a consulta criada com sucesso!', 'meetingsession' => $meetingSession], 201);
+        return redirect('/appointment/' . $paciente->name . '/' . $consulta->id);
     }
 
     private function saveDocument($phpWord, $psicologo, $paciente, $consulta, $filename)
