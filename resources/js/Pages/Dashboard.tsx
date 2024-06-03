@@ -95,7 +95,7 @@ export default function Dashboard({ auth, ConsultasNoDiaDeHoje }: PageProps<{ Co
                                                 {consulta.patient.name}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
-                                                {consulta.patient.logradouro}
+                                                {consulta.patient.logradouro}, {consulta.patient.bairro}, {consulta.patient.localidade} - {consulta.patient.uf}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300">
                                                 {consulta.patient.celular}
