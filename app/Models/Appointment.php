@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Appointment extends Authenticatable
 {
+    use HasFactory;
+
     protected $fillable = ['date', 'time', 'patient_id', 'psychologist_id'];
 
     public function patient()

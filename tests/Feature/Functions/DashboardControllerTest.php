@@ -2,154 +2,69 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
 use App\Models\Appointment;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\User;
+use App\Models\MeetingSession;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Tests\TestCase;
-use Tests\Traits\AccessPrivateMethods;
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Event;
+use App\Events\MyEvent;
 
 class DashboardControllerTest extends TestCase
 {
-    use DatabaseTransactions, AccessPrivateMethods;
+    use RefreshDatabase;
 
-    public function test_dashboard_screen_can_be_rendered_for_secretaria(): void
+    public function test_dashboard_for_secretaria()
     {
-        $user = User::factory()->create(['role' => 'secretaria']);
+        $secretaria = User::factory()->create(['role' => 'secretaria']);
+        $this->actingAs($secretaria);
 
-        $response = $this->post('/login', [
-            'username' => $user->username,
-            'password' => 'password',
-        ]);
+        $response = $this->get(route('dashboard'));
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard')
+            ->has('ConsultasNoDiaDeHoje'));
     }
 
-    public function test_dashboard_screen_can_be_rendered_for_patient(): void
+    public function test_dashboard_for_paciente()
     {
-        $user = User::factory()->create(['role' => 'paciente']);
+        $paciente = User::factory()->create(['role' => 'paciente']);
+        $this->actingAs($paciente);
 
-        $response = $this->post('/login', [
-            'username' => $user->username,
-            'password' => 'password',
-        ]);
+        $response = $this->get(route('dashboard'));
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('DashboardPaciente')
+            ->has('historico')
+            ->has('proximaConsulta')
+            ->has('proximasConsultas')
+            ->has('psychologists'));
     }
 
-    public function test_dashboard_screen_can_be_rendered_for_psico(): void
+    public function test_dashboard_for_psicologo()
     {
-        $user = User::factory()->create(['role' => 'psicologo']);
+        $psicologo = User::factory()->create(['role' => 'psicologo']);
+        $this->actingAs($psicologo);
 
-        $response = $this->post('/login', [
-            'username' => $user->username,
-            'password' => 'password',
-        ]);
+        $response = $this->get(route('dashboard'));
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('DashboardPsicologo')
+            ->has('pacientes')
+            ->has('consultas'));
     }
 
-    public function test_unauthenticated_user_is_redirected(): void
+    public function test_unauthenticated_user_redirected_to_login()
     {
-        $response = $this->get('/dashboard');
+        $response = $this->get(route('dashboard'));
 
-        $response->assertRedirect('/'); // Verifique se a rota correta de redirecionamento está sendo usada
+        $response->assertRedirect(route('login'));
     }
 
-    public function test_getHistorico()
-    {
-        $patient = User::factory()->create(['role' => 'patient']);
-        $pastAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->subDays(10)
-        ]);
-        $futureAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->addDays(10)
-        ]);
-
-        $controller = $this->app->make('App\Http\Controllers\AppointmentController');
-        $result = $this->callMethod($controller, 'getHistorico', [$patient->id]);
-
-        $this->assertCount(1, $result);
-        $this->assertTrue($result->contains($pastAppointment));
-        $this->assertFalse($result->contains($futureAppointment));
-    }
-
-    public function test_getProximaConsulta()
-    {
-        $patient = User::factory()->create(['role' => 'patient']);
-        $futureAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->addDays(10)
-        ]);
-        $laterAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->addDays(20)
-        ]);
-
-        $controller = $this->app->make('App\Http\Controllers\AppointmentController');
-        $result = $this->callMethod($controller, 'getProximaConsulta', [$patient->id]);
-
-        $this->assertEquals($futureAppointment->id, $result->id);
-    }
-
-    public function test_getProximasConsultas()
-    {
-        $patient = User::factory()->create(['role' => 'patient']);
-        $futureAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->addDays(10)
-        ]);
-        $laterAppointment = Appointment::factory()->create([
-            'patient_id' => $patient->id,
-            'date' => Carbon::now()->addDays(20)
-        ]);
-
-        $controller = $this->app->make('App\Http\Controllers\AppointmentController');
-        $result = $this->callMethod($controller, 'getProximasConsultas', [$patient->id]);
-
-        $this->assertCount(2, $result);
-        $this->assertTrue($result->contains($futureAppointment));
-        $this->assertTrue($result->contains($laterAppointment));
-    }
-
-    public function test_getPacientes()
-    {
-        $psychologist = User::factory()->create(['role' => 'psychologist']);
-        $patient = User::factory()->create(['role' => 'patient']);
-        Appointment::factory()->create([
-            'psychologist_id' => $psychologist->id,
-            'patient_id' => $patient->id,
-        ]);
-
-        $controller = $this->app->make('App\Http\Controllers\AppointmentController');
-        $result = $this->callMethod($controller, 'getPacientes', [$psychologist->id]);
-
-        $this->assertCount(1, $result);
-        $this->assertTrue($result->contains($patient));
-    }
-
-    public function test_getConsultas()
-    {
-        $psychologist = User::factory()->create(['role' => 'psychologist']);
-        $patient = User::factory()->create(['role' => 'patient']);
-        $appointment = Appointment::factory()->create([
-            'psychologist_id' => $psychologist->id,
-            'patient_id' => $patient->id,
-        ]);
-        $meeting = MeetingSession::factory()->create([
-            'appointment_id' => $appointment->id,
-        ]);
-
-        $controller = $this->app->make('App\Http\Controllers\AppointmentController');
-        $result = $this->callMethod($controller, 'getConsultas', [$psychologist->id]);
-
-        $this->assertCount(1, $result);
-        $this->assertTrue($result->contains($appointment));
-        $this->assertTrue($result->first()->hasMeetingSession);
-    }
 }

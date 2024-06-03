@@ -2,60 +2,64 @@
 
 namespace Tests\Feature\Auth;
 
-use Illuminate\Foundation\Testing\DatabaseTransictions;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
+use App\Models\User;
 
 class RegistrationTest extends TestCase
 {
-    use DatabaseTransictions;
+    use DatabaseTransactions;
 
-    public function test_registration_psico_screen_can_be_rendered(): void
+    public function test_registration_screen_can_be_rendered(): void
     {
-        $response = $this->get('/register-psicologo');
+         // Crie um usuário com a role 'secretaria'
+         $user = User::factory()->create(['role' => 'secretaria']);
 
-        $response->assertStatus(200);
-    }
-
-    public function test_registration_patient_screen_can_be_rendered(): void
-    {
-        $response = $this->get('/register-paciente');
-
-        $response->assertStatus(200);
+         // Autentique-se com este usuário
+         $response = $this->actingAs($user)->get('/register');
+ 
+         // Verifique se a página de registro pode ser renderizada
+         $response->assertStatus(200);
     }
 
     public function test_new_psico_can_register(): void
     {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'username' => 'User Test',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-            'cep' => '11111111',
-            'numero' => '11111111111',
+        $user = User::factory()->create(['role' => 'secretaria']);
+
+        $response = $this->actingAs($user)->post('/register-psicologo', [
+            'name' => 'Test Psicologo',
             'role' => 'psicologo',
-
-
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('dashboard'));
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Test Psicologo',
+            'role' => 'psicologo',
+        ]);
     }
 
     public function test_new_patient_can_register(): void
     {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'username' => 'User Test',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-            'cep' => '11111111',
-            'numero' => '11111111111',
+        $user = User::factory()->create(['role' => 'secretaria']);
+
+        $response = $this->actingAs($user)->post('/register-paciente', [
+            'name' => 'Test Patient',
+            'logradouro' => 'Rua Teste',
+            'bairro' => 'Bairro Teste',
+            'localidade' => 'Cidade Teste',
+            'uf' => 'SP',
+            'celular' => '11999999999',
             'role' => 'paciente',
-
-
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('dashboard'));
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Test Patient',
+            'role' => 'paciente',
+        ]);
     }
 }
+

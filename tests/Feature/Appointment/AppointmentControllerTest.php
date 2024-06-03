@@ -2,55 +2,73 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Appointment;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AppointmentControllerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
-    public function test_create_screen_can_be_rendered_for_secretaria(): void
+    public function test_store_creates_an_appointment()
     {
-        $user = User::factory()->create(['role' => 'secretaria']);
-
-        $response = $this->actingAs($user)->get('/create-consulta');
-
-        $response->assertStatus(200);
-    }
-
-    public function test_create_screen_redirects_for_non_secretaria(): void
-    {
-        $user = User::factory()->create(['role' => 'paciente']);
-
-        $response = $this->actingAs($user)->get('/create-consulta');
-
-        $response->assertRedirect(route('dashboard', absolute: false));
-    }
-
-    public function test_appointments_can_be_stored(): void
-    {
-        $patient = User::factory()->create(['role' => 'paciente']);
         $psychologist = User::factory()->create(['role' => 'psicologo']);
+        $patient = User::factory()->create(['role' => 'paciente']);
 
-        // Garante que o usuário esteja autenticado
-        $user = User::factory()->create(['role' => 'secretaria']);
-        $this->actingAs($user);
+        $this->actingAs($psychologist);
 
         $response = $this->post('/create-consulta', [
-            'date' => '2022-12-31',
-            'time' => '15:00',
+            'date' => '2024-06-10',
+            'time' => '10:00',
             'patient_id' => $patient->id,
             'psychologist_id' => $psychologist->id,
         ]);
 
+        $response->assertRedirect(route('dashboard'));
         $this->assertDatabaseHas('appointments', [
-            'date' => '2022-12-31',
-            'time' => '15:00',
+            'date' => '2024-06-10',
+            'time' => '10:00',
             'patient_id' => $patient->id,
             'psychologist_id' => $psychologist->id,
         ]);
+    }
 
-        $response->assertStatus(201);
+    public function test_store_validation_error()
+    {
+        $psychologist = User::factory()->create(['role' => 'psicologo']);
+        $this->actingAs($psychologist);
+
+        $response = $this->post('/create-consulta', [
+            'date' => 'invalid-date',
+            'time' => '10:00',
+            'patient_id' => 999, // Non-existent user
+            'psychologist_id' => 999, // Non-existent user
+        ]);
+
+        $response->assertSessionHasErrors(['date', 'patient_id', 'psychologist_id']);
+    }
+
+    public function test_get_available_times()
+    {
+        $psychologist = User::factory()->create(['role' => 'psicologo']);
+
+        // Create an existing appointment to occupy a time slot
+        Appointment::factory()->create([
+            'date' => '2024-06-10',
+            'time' => '10:00:00',
+            'psychologist_id' => $psychologist->id,
+        ]);
+
+        $this->actingAs($psychologist);
+
+        $response = $this->get('/available-times?date=2024-06-10&psychologist_id=' . $psychologist->id);
+
+        $response->assertStatus(200);
+        $availableTimes = json_decode($response->getContent(), true);
+
+        $this->assertNotContains('10:00', $availableTimes);
+        $this->assertContains('09:00', $availableTimes);
+        $this->assertContains('11:00', $availableTimes);
     }
 }

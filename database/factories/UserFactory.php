@@ -28,9 +28,14 @@ class UserFactory extends Factory
             'username' => fake()->name(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'cep' => '13087500',
-            'numero' => '18997844864',
+            'logradouro' => 'aaaaaaaaa',
+            'bairro' => 'aaaaaaaaa',
+            'localidade' => 'aaaaaaaaa',
+            'uf' => 'sp',
+            'celular' => '18111111111',
+
             'role' => $this->faker->randomElement(['paciente', 'psicologo', 'secretaria']),
+
 
 
         ];

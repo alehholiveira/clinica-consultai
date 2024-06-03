@@ -3,77 +3,75 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransictions;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
-    use DatabaseTransictions;
+    use DatabaseTransactions;
 
     public function test_profile_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $psychologist = User::factory()->create(['role' => 'psicologo']);
+        $patient = User::factory()->create(['role' => 'paciente']);
 
         $response = $this
-            ->actingAs($user)
-            ->get('/profile');
+            ->actingAs($psychologist)
+            ->get(route('profile.edit', ['patient_id' => $patient->id]));
 
         $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Profile/Edit')
+            ->has('patient', fn ($page) => $page
+                ->where('id', $patient->id)
+                ->etc()
+            )
+        );
     }
 
     public function test_profile_information_can_be_updated(): void
     {
-        $user = User::factory()->create();
+        $psychologist = User::factory()->create(['role' => 'psicologo']);
+        $patient = User::factory()->create(['role' => 'paciente']);
 
         $response = $this
-            ->actingAs($user)
-            ->patch('/profile', [
+            ->actingAs($psychologist)
+            ->patch(route('profile.update', ['patient_id' => $patient->id]), [
                 'name' => 'Test User',
+                'logradouro' => 'Test Logradouro',
+                'bairro' => 'Test Bairro',
+                'localidade' => 'Test Localidade',
+                'uf' => 'TS',
+                'celular' => '12345678901',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit', ['patient_id' => $patient->id]));
 
-        $user->refresh();
+        $patient->refresh();
 
-        $this->assertSame('Test User', $user->name);
+        $this->assertSame('Test User', $patient->name);
+        $this->assertSame('Test Logradouro', $patient->logradouro);
+        $this->assertSame('Test Bairro', $patient->bairro);
+        $this->assertSame('Test Localidade', $patient->localidade);
+        $this->assertSame('TS', $patient->uf);
+        $this->assertSame('12345678901', $patient->celular);
     }
-
 
     public function test_user_can_delete_their_account(): void
     {
-        $user = User::factory()->create();
+        $psychologist = User::factory()->create(['role' => 'psicologo']);
+        $patient = User::factory()->create(['role' => 'paciente']);
 
         $response = $this
-            ->actingAs($user)
-            ->delete('/profile', [
-                'password' => 'password',
-            ]);
+            ->actingAs($psychologist)
+            ->delete(route('profile.destroy', ['patient_id' => $patient->id]));
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/');
+            ->assertRedirect(route('dashboard'));
 
-        $this->assertGuest();
-        $this->assertNull($user->fresh());
-    }
-
-    public function test_correct_password_must_be_provided_to_delete_account(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->from('/profile')
-            ->delete('/profile', [
-                'password' => 'wrong-password',
-            ]);
-
-        $response
-            ->assertSessionHasErrors('password')
-            ->assertRedirect('/profile');
-
-        $this->assertNotNull($user->fresh());
+        $this->assertNull($patient->fresh());
     }
 }
