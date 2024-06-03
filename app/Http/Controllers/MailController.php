@@ -21,7 +21,7 @@ class MailController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        Mail::to('consultaiteste@gmail.com','consultai')->send(new Contact([
+        Mail::to('secretaria@consultai.com','Clinica ConsultAí')->send(new Contact([
             'fromName' => $request->input('name'),
             'fromEmail' => $request->input('email'),
             'subject' => $request->input('subject'),

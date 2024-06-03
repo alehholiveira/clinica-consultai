@@ -9,7 +9,7 @@ function createWindow () {
     }
   })
 
-  win.loadURL('http://localhost:8000')
+  win.loadURL('http://localhost:30000')
 }
 
 app.whenReady().then(createWindow)

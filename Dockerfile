@@ -18,14 +18,19 @@ RUN apt-get update -y && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
-    libpq-dev
+    libpq-dev \
+    libzip-dev
+
+# PHP Extension: Configure and Install Zip extension
+RUN docker-php-ext-configure zip && docker-php-ext-install zip
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # PHP Extension
-RUN docker-php-ext-install gettext intl pdo_pgsql gd
+RUN docker-php-ext-install gettext intl pdo_pgsql
 
+# PHP GD Extension
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
