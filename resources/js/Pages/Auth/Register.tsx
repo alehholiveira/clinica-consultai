@@ -17,6 +17,7 @@ export default function Register() {
         errors: patientErrors,
         reset: resetPatient,
     } = useForm({
+        email: '',
         name: '',
         cep: '',
         logradouro: '',
@@ -35,6 +36,7 @@ export default function Register() {
         errors: psychologistErrors,
         reset: resetPsychologist,
     } = useForm({
+        email: '',
         name: '',
         role: 'psicologo'
     });
@@ -97,6 +99,22 @@ export default function Register() {
             {!isPsychologist ? (
                 <div className=" bg-white border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-md bg-opacity-100 relative">
                     <form onSubmit={submit} >
+                        <div className='relative my-4'>
+                            <input
+                                id="email"
+                                value={patientData.email}
+                                className="block w-72 py-2.3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-indigo-500 appearnce-none dark:focus:border-blue-500 focus: outline-none focus:ring-0 focus:text-black focus:border-blue-600 peer"
+                                placeholder="Email para contato"
+                                onChange={(e) => setPatientData('email', e.target.value)}
+                            />
+                            <label
+                                htmlFor=''
+                                className="absolute text-lg text-black duration-300  transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer placeholder-shown:scale-100 peer-placeholder-shown:trasnlate-y-0 peer-focus:sacale-75 peer-focus:-translate-y-6 "
+                            >
+                                Email para contato
+                            </label>
+                            <InputError message={patientErrors.email} className="mt-2" />
+                        </div>
                         <div className='relative my-4'>
                             <input
                                 id="name"
@@ -218,7 +236,23 @@ export default function Register() {
                 </div>
             ) : (
                 <div className=" bg-white border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-md bg-opacity-100 relative">
-                <form onSubmit={submit}>
+                    <form onSubmit={submit}>
+                        <div className='relative my-4'>
+                            <input
+                                id="email"
+                                value={psychologistData.email}
+                                className="block w-72 py-2.3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-indigo-500 appearnce-none dark:focus:border-blue-500 focus: outline-none focus:ring-0 focus:text-black focus:border-blue-600 peer"
+                                placeholder="Email para contato"
+                                onChange={(e) => setPsychologistData('email', e.target.value)}
+                            />
+                            <label
+                                htmlFor=''
+                                className="absolute text-lg text-black duration-300  transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer placeholder-shown:scale-100 peer-placeholder-shown:trasnlate-y-0 peer-focus:sacale-75 peer-focus:-translate-y-6 "
+                            >
+                                Email para contato
+                            </label>
+                            <InputError message={patientErrors.email} className="mt-2" />
+                        </div>
                         <div className='relative my-4'>
                             <input
                                 id="nome"
@@ -240,10 +274,10 @@ export default function Register() {
                                 Cadastrar
                             </PrimaryButton>
                         </div>
-                </form>
+                    </form>
                 </div>
-    )
-}
+            )
+            }
         </GuestLayout >
     );
 }

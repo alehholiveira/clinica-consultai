@@ -6,6 +6,8 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Appointment } from "@/types";
 import type { MeetingSession, PageProps } from "@/types";
 import { Head, useForm } from "@inertiajs/react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { FormEventHandler } from "react";
 
 export default function MeetingSession({
@@ -35,6 +37,10 @@ export default function MeetingSession({
         post("/appointment/documents/info");
     };
 
+    const formatDateTime = (dateString: string, timeString: string) => {
+        const date = new Date(`${dateString}T${timeString}`);
+        return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    };
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -49,46 +55,70 @@ export default function MeetingSession({
                 <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
                     Informações da Consulta
                 </h2>
-
+    
                 <div className="flex">
                     <div className="w-1/3 p-4 bg-gray-100 rounded-md shadow-sm">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600">
                             Detalhes da Consulta
                         </h3>
                         <p>
-                            <strong>Paciente:</strong> {appointment.patient_id}
+                            <strong>Paciente:</strong> {appointment.patient.name}
                         </p>
                         <p>
-                            <strong>Hora:</strong> {appointment.time}
+                            <strong>Data:</strong> {formatDateTime(appointment.date, appointment.time)}
                         </p>
                     </div>
-
+    
                     <div className="w-2/3 pl-6">
                         <div className="flex mb-6 space-x-4">
                             <div className="flex-1">
                                 <p className="text-sm text-gray-500 mt-2">
                                     Informações sobre encaminhamento.
                                 </p>
-                                <button
-                                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
-                                    onClick={submitEncaminhamento()}
-                                >
-                                    Criar Encaminhamento
-                                </button>
+                                {meetingsession.referrals && (
+                                    <a
+                                        href={`/download/${meetingsession.referrals}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full text-center block"
+                                    >
+                                        Visualizar Encaminhamento
+                                    </a>
+                                )}
+                                {!meetingsession.referrals && (
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
+                                        onClick={submitEncaminhamento()}
+                                    >
+                                        Gerar Encaminhamento
+                                    </button>
+                                )}
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm text-gray-500 mt-2">
                                     Informações sobre atestado.
                                 </p>
-                                <button
-                                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full"
-                                    onClick={submitAtestado()}
-                                >
-                                    Criar Atestado
-                                </button>
+                                {meetingsession.attendance_certificates && (
+                                    <a
+                                        href={`/download/${meetingsession.attendance_certificates}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full text-center block"
+                                    >
+                                        Visualizar Atestado
+                                    </a>
+                                )}
+                                {!meetingsession.attendance_certificates && (
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
+                                        onClick={submitAtestado()}
+                                    >
+                                        Gerar Atestado
+                                    </button>
+                                )}
                             </div>
                         </div>
-
+    
                         <form onSubmit={submit}>
                             <div className="mb-4">
                                 <InputLabel
@@ -102,9 +132,7 @@ export default function MeetingSession({
                                     rows={4}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-gray-500"
                                     value={data.meetinginfo}
-                                    onChange={(e) =>
-                                        setData("meetinginfo", e.target.value)
-                                    }
+                                    onChange={(e) => setData("meetinginfo", e.target.value)}
                                     required
                                 />
                                 <InputError

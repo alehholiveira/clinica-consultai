@@ -14,6 +14,8 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Contact;
 
 class RegisteredUserController extends Controller
 {
@@ -39,6 +41,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|',
             'logradouro' => 'string|max:255',
             'bairro' => 'string|max:255',
             'localidade' => 'string|max:255',
@@ -62,8 +65,16 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
+        Mail::to($request->email, $request->name)->send(new Contact([
+            'fromName' => 'Clinica ConsultAí',
+            'fromEmail' => 'secretaria@consultai.com',
+            'subject' => 'Acesso a plataforma - Paciente',
+            'message' => 'Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password,
+
+        ]));
+
         // solução temporaria para salvar username e senha do usuário criado
-        Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
+       //  Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
 
         event(new Registered($user));
 
@@ -74,6 +85,7 @@ class RegisteredUserController extends Controller
     public function storePsicologo(Request $request): RedirectResponse
     {
         $request->validate([
+            'email' => 'required|string|lowercase|email|max:255|',
             'name' => 'required|string|max:255',
             'role' => 'required|string'
         ]);
@@ -88,8 +100,17 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
+
+        Mail::to($request->email, $request->name)->send(new Contact([
+            'fromName' => 'Clinica ConsultAí',
+            'fromEmail' => 'secretaria@consultai.com',
+            'subject' => 'Acesso a plataforma - Psicologo',
+            'message' => 'Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password,
+
+        ]));
+
         // solução temporaria para salvar username e senha do usuário criado
-        Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
+        // Log::info('Nome: ' . $user->name . ', Usuário criado: ' . $username . ', Senha: ' . $password);
 
         event(new Registered($user));
 

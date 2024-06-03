@@ -66,6 +66,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('appointment/documents/info', [MeetingSessionController::class, 'gerarInfo']);
 
+    Route::get('/download/{storage}/{psicologo}/{paciente}/{data}/{documento}', [MeetingSessionController::class, 'download'])->name('download');
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

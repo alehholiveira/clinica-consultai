@@ -4,6 +4,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { BiUser } from "react-icons/bi";
 import { AiOutlineLock } from "react-icons/ai";
 import InputError from "@/Components/InputError";
+import Checkbox from "@/Components/Checkbox";
 
 export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -72,6 +73,16 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                         </label>
                         <AiOutlineLock className=" absolute top-4 right-4" />
                     </div>
+                    <div className="block mt-4">
+                    <label className="flex items-center">
+                        <Checkbox
+                            name="remember"
+                            checked={data.remember}
+                            onChange={(e) => setData('remember', e.target.checked)}
+                        />
+                        <span className="ms-2 text-sm text-gray-600">Lembrar</span>
+                    </label>
+                </div>
                     <button
                         className="w-full mb-4 text-[18px] mt-6 rounded-full bg-indigo-500 text-emerald-800 hover:bg-sky-500 hover:text-black py-2 transition-colors duration-300 "
                         type="submit"

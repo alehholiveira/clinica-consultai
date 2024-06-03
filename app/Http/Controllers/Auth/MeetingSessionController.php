@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -25,7 +27,8 @@ class MeetingSessionController extends Controller
 
         if ($auth->role == 'psicologo') {
             $meetingSession = MeetingSession::where('appointment_id', $appointment_id)->first();
-            $appointment = Appointment::find($appointment_id);
+            $appointment = Appointment::with(['patient', 'psychologist'])
+            ->find($appointment_id);
             return Inertia::render('Auth/MeetingSession', [
                 'meetingsession' => $meetingSession,
                 'appointment' => $appointment
@@ -129,7 +132,7 @@ class MeetingSessionController extends Controller
         $meetingSession->referrals = $encaminhamentoPath;
         $meetingSession->save();
 
-        return response()->json(['message' => 'Encaminhamento criado com sucesso!', 'meetingsession' => $meetingSession], 201);
+        return redirect('/appointment/' . $paciente->name . '/' . $consulta->id);
     }
 
     public function gerarAtestado(Request $request)  // modificar essa funcao para gerar cada um dos arquivos
@@ -219,7 +222,7 @@ class MeetingSessionController extends Controller
         $meetingSession->attendance_certificates = $atestadoPath;
         $meetingSession->save();
 
-        return response()->json(['message' => 'Atestado gerado com sucesso!', 'meetingsession' => $meetingSession], 201);
+        return redirect('/appointment/' . $paciente->name . '/' . $consulta->id);
     }
 
     public function gerarInfo(Request $request)  // modificar essa funcao para gerar cada um dos arquivos
@@ -289,12 +292,24 @@ class MeetingSessionController extends Controller
     private function saveDocument($phpWord, $psicologo, $paciente, $consulta, $filename)
     {
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-        $path = './storage/storage/public/' . $psicologo->name . '/' . $paciente->name . '/' . $consulta->date;
-        if (!File::exists(storage_path($path))) {
-            File::makeDirectory(storage_path($path), 0777, true);
+        $path = 'public/storage/' . $psicologo->name . '/' . $paciente->name . '/' . $consulta->date;
+        if (!File::exists(storage_path('app/' . $path))) {
+            File::makeDirectory(storage_path('app/' . $path), 0777, true);
         }
         $fullPath = $path . '/' . $filename;
-        $objWriter->save(storage_path($fullPath));
-        return $fullPath;
+        $objWriter->save(storage_path('app/' . $fullPath));
+        $patharquivo = 'storage/' . $psicologo->name . '/' . $paciente->name . '/' . $consulta->date . '/' . $filename;
+        return $patharquivo;
+    }
+
+    public function download($storage, $psicologo, $paciente, $data, $documento)
+    {
+        $auth = Auth::user();
+
+        if ($auth->role == 'psicologo') {
+            return Storage::download('public/' . $storage .'/'. $psicologo . '/'. $paciente . '/' . $data . '/' . $documento);
+        } else {
+            abort(403, 'Acesso negado');
+        }
     }
 }
