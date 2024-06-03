@@ -3,6 +3,8 @@ import logo from "../assets/logo2.png";
 import ex1 from "../assets/exemplo 1.png";
 import ex2 from "../assets/exemplo2.png";
 import { BiUser } from "react-icons/bi";
+import axios from 'axios';
+import { useState } from 'react';
 
 const navigation = [
     { label: "Inicío", href: "#" },
@@ -78,6 +80,12 @@ export const Clientes = [
     },
 ];
 
+
+
+
+
+
+
 export default function Welcome({
     auth,
     laravelVersion,
@@ -93,6 +101,34 @@ export default function Welcome({
             ?.classList.add("!flex-row");
         document.getElementById("background")?.classList.add("!hidden");
     };
+
+    const [formValues, setFormValues] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message : ''
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormValues({ ...formValues, [name]: value });
+      };
+
+
+      const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+      const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const sendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
+        setShowSuccessMessage(false);
+        setShowErrorMessage(false);
+        e.preventDefault();
+        try{
+            await axios.post('/send',formValues);
+            setShowSuccessMessage(true);
+        }catch(error){
+            setShowErrorMessage(true);
+        }
+    };
+
     return (
         <>
             <nav className="sticky top-0 x-50 py-3 backdrop-blur-lg border-neutral-700/80 ">
@@ -328,7 +364,7 @@ export default function Welcome({
                                 <h2 className="text-3xl text-center text-white font-bold mb-6">
                                     ENTRE EM CONTATO
                                 </h2>
-                                <form action="">
+                                <form onSubmit={sendEmail}>
                                     <div className="mb-4">
                                         <label
                                             className="block text-white text-sm font-semibold mb-2"
@@ -340,6 +376,9 @@ export default function Welcome({
                                             className="text-white w-full px-3 py-2 border-white rounded-lg bg-sky-600 focus:outline-none focus:border-white"
                                             required
                                             type="text"
+                                            name="name"
+                                            value={formValues.name}
+                                            onChange={handleChange}
                                         />
                                     </div>
                                     <div className="mb-4">
@@ -353,8 +392,28 @@ export default function Welcome({
                                             className="text-white w-full px-3 py-2 border-white rounded-lg bg-sky-600 focus:outline-none focus:border-white"
                                             required
                                             type="email"
+                                            name="email"
+                                            value={formValues.email}
+                                            onChange={handleChange}
+
                                         />
                                     </div>
+                                    <div className="mb-4">
+                                        <label
+                                            className="block text-white text-sm font-semibold mb-2"
+                                            htmlFor=""
+                                        >
+                                            ASSUNTO
+                                        </label>
+                                        <input
+                                            className="text-white w-full px-3 py-2 border-white rounded-lg bg-sky-600 focus:outline-none focus:border-white"
+                                            required
+                                            type="text"
+                                            name="subject"
+                                            value={formValues.subject}
+                                            onChange={handleChange}
+
+                                        />
                                     <div className="mb-4">
                                         <label
                                             className="block text-white text-sm font-semibold mb-2"
@@ -367,7 +426,11 @@ export default function Welcome({
                                             placeholder=""
                                             className="text-white w-full px-3 py-2 border-white rounded-lg bg-sky-600 focus:outline-none focus:border-white"
                                             required
+                                            name="message"
+                                            value={formValues.message}
+                                            onChange={handleChange}
                                         />
+                                    </div>
                                     </div>
                                     <div className="flex justify-center">
                                         <button
@@ -377,6 +440,11 @@ export default function Welcome({
                                             ENVIAR FORMULÁRIO
                                         </button>
                                     </div>
+
+                                    {showSuccessMessage && <p style={{ color: '#06FF70' }} className="flex justify-center">E-mail enviado com sucesso!</p>}
+                                    {showErrorMessage && <p style={{ color: '#FF3B23' }} className="flex justify-center">Ocorreu um erro ao enviar o e-mail</p>}
+
+
                                 </form>
                             </div>
                         </div>
