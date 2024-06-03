@@ -34,24 +34,24 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Informações do paciente</h2>}
         >
-            <Head title="Profile" />
+            <Head title="Informações do paciente" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         <section className="max-w-xl">
                             <header>
-                                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                                <h2 className="text-lg font-medium text-gray-900">Informações do paciente</h2>
                                 <p className="mt-1 text-sm text-gray-600">
-                                    Update your account's profile information and email address.
+                                    Atualize as informações do paciente desejadas.
                                 </p>
                             </header>
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div>
-                                    <InputLabel htmlFor="name" value="Name" />
+                                    <InputLabel htmlFor="name" value="Nome do paciente" />
                                     <TextInput
                                         id="name"
                                         className="mt-1 block w-full"
@@ -64,7 +64,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                     <InputError className="mt-2" message={errors.name} />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="logradouro" value="Logradouro" />
+                                    <InputLabel htmlFor="logradouro" value="Endereço" />
                                     <TextInput
                                         id="logradouro"
                                         className="mt-1 block w-full"
@@ -86,7 +86,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                     <InputError className="mt-2" message={errors.bairro} />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="localidade" value="Localidade" />
+                                    <InputLabel htmlFor="localidade" value="Cidade" />
                                     <TextInput
                                         id="localidade"
                                         className="mt-1 block w-full"
@@ -97,7 +97,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                     <InputError className="mt-2" message={errors.localidade} />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="uf" value="UF" />
+                                    <InputLabel htmlFor="uf" value="Estado" />
                                     <TextInput
                                         id="uf"
                                         className="mt-1 block w-full"
@@ -108,7 +108,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                     <InputError className="mt-2" message={errors.uf} />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="celular" value="Celular" />
+                                    <InputLabel htmlFor="celular" value="Celular para contato" />
                                     <TextInput
                                         id="celular"
                                         className="mt-1 block w-full"
@@ -120,7 +120,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                                    <PrimaryButton disabled={processing}>Salvar informações</PrimaryButton>
                                     <Transition
                                         show={recentlySuccessful}
                                         enter="transition ease-in-out"
@@ -128,7 +128,7 @@ export default function Edit({ auth, patient }: PageProps<{ patient: User }>) {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-gray-600">Saved.</p>
+                                        <p className="text-sm text-gray-600">Salvo.</p>
                                     </Transition>
                                 </div>
                             </form>
