@@ -11,13 +11,16 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+            <nav className="sticky top-0 x-50 py-3 backdrop-blur-lg bg-white border-b ">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
                                 <Link href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                </Link>
+                                <Link href="/">
+                                    CONSULTAÍ
                                 </Link>
                             </div>
 
