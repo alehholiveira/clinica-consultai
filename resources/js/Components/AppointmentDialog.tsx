@@ -52,7 +52,7 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
             onSuccess: () => {
                 reset();
                 if (closeRef.current) closeRef.current.click();
-                toast.success(`Consulta criada com sucesso`, {
+                toast.success(`Consulta criada com sucesso!`, {
                     position: "top-right",
                     autoClose: 13000,
                     hideProgressBar: false,
@@ -90,13 +90,13 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Overlay className="inset-0 fixed bg-black/50" />
-                <Dialog.Content className="fixed overflow-hidden left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 p-8 shadow-md rounded-md text-white max-w-md w-full">
-                    <Dialog.Close ref={closeRef} className="absolute right-0 top-0 bg-gray-800 p-1.5 text-slate-100 rounded-md">
+                <Dialog.Content className="fixed overflow-hidden left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 shadow-md rounded-md text-gray-900 max-w-md w-full">
+                    <Dialog.Close ref={closeRef} className="absolute right-0 top-0 bg-white p-1.5 text-red-600 rounded-md">
                         <X className="size-5" />
                     </Dialog.Close>
 
                     <form onSubmit={submit} className="space-y-4">
-                        <h2 className="text-2xl font-bold mb-6 text-center">Agendar Consulta</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">Agendar Consulta</h2>
                         <div className="flex justify-between mb-4">
                             <button
                                 type="button"
@@ -109,7 +109,7 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
                             <span>{dayjs(selectedWeekStart).format('MMMM/YYYY')}</span>
                             <button
                                 type="button"
-                                className="text-gray-400"
+                                className="text-gray-400 "
                                 onClick={handleNextWeek}
                             >
                                 &rarr;
@@ -124,7 +124,7 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
                                     <button
                                         type="button"
                                         key={index}
-                                        className={`py-2 ${day.isSame(selectedDate, 'day') ? 'bg-blue-600' : 'bg-gray-700 hover:bg-blue-900'} rounded-md ${isPastDay ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`py-2 ${day.isSame(selectedDate, 'day') ? 'bg-blue-500' : 'bg-gray-400 hover:bg-blue-600'} rounded-md ${isPastDay ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         onClick={() => {
                                             if (!isPastDay) {
                                                 setSelectedDate(day.format('YYYY-MM-DD'));
@@ -145,7 +145,7 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
                                     <button
                                         type="button"
                                         key={psychologist.id}
-                                        className={`flex flex-col items-center p-2 hover:bg-yellow-700 ${data.psychologist_id === String(psychologist.id) ? 'border border-yellow-500' : ''}`}
+                                        className={`flex flex-col items-center p-2 hover:bg-blue-500 rounded-md ${data.psychologist_id === String(psychologist.id) ? 'border border-blue-500' : ''}`}
                                         onClick={() => setData('psychologist_id', String(psychologist.id))}
                                     >
                                         <span>{psychologist.name}</span>
@@ -160,7 +160,7 @@ export default function AppointmentDialog({ auth, psychologists }: PageProps<{ p
                                     <button
                                         type="button"
                                         key={time}
-                                        className={`py-2 px-4 border ${data.time === time ? 'border-blue-500' : 'border-gray-700 hover:bg-gray-700'} rounded-md`}
+                                        className={`py-2 px-4 border ${data.time === time ? 'border-blue-500' : 'border-gray-700 hover:bg-blue-600'} rounded-md`}
                                         onClick={() => setData('time', time)}
                                     >
                                         {time}
