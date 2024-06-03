@@ -5,7 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\MeetingSession;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Tests\TestCase;
@@ -15,7 +15,7 @@ use App\Events\MyEvent;
 
 class DashboardControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_dashboard_for_secretaria()
     {

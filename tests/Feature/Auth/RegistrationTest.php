@@ -3,7 +3,6 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use App\Models\User;
 
@@ -13,14 +12,14 @@ class RegistrationTest extends TestCase
 
     public function test_registration_screen_can_be_rendered(): void
     {
-         // Crie um usuário com a role 'secretaria'
-         $user = User::factory()->create(['role' => 'secretaria']);
+        // Crie um usuário com a role 'secretaria'
+        $user = User::factory()->create(['role' => 'secretaria']);
 
-         // Autentique-se com este usuário
-         $response = $this->actingAs($user)->get('/register');
- 
-         // Verifique se a página de registro pode ser renderizada
-         $response->assertStatus(200);
+        // Autentique-se com este usuário
+        $response = $this->actingAs($user)->get('/register');
+
+        // Verifique se a página de registro pode ser renderizada
+        $response->assertStatus(200);
     }
 
     public function test_new_psico_can_register(): void
@@ -30,6 +29,7 @@ class RegistrationTest extends TestCase
         $response = $this->actingAs($user)->post('/register-psicologo', [
             'name' => 'Test Psicologo',
             'role' => 'psicologo',
+            'email' => 'psico@test.com', // Necessário para o envio do email, mas não será verificado no banco de dados
         ]);
 
         $response->assertRedirect(route('dashboard'));
@@ -52,6 +52,7 @@ class RegistrationTest extends TestCase
             'uf' => 'SP',
             'celular' => '11999999999',
             'role' => 'paciente',
+            'email' => 'patient@test.com', // Necessário para o envio do email, mas não será verificado no banco de dados
         ]);
 
         $response->assertRedirect(route('dashboard'));
@@ -62,4 +63,3 @@ class RegistrationTest extends TestCase
         ]);
     }
 }
-

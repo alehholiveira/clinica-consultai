@@ -63,8 +63,20 @@ class MeetingSessionControllerTest extends TestCase
                 'meetingsession_id' => $meetingSession->id,
             ]);
 
-        $response->assertStatus(201);
-        $response->assertJson(['message' => 'Encaminhamento criado com sucesso!']);
+        $response->assertStatus(302);
+        $response->assertRedirect("/appointment/{$appointment->patient->name}/{$appointment->id}");
+
+        // Obter a sessão de reunião atualizada
+        $meetingSession->refresh();
+
+        // Construir o caminho esperado do arquivo
+        $expectedFilePath = 'storage/' . $psicologo->name . '/' . $appointment->patient->name . '/' . $appointment->date . '/encaminhamento.docx';
+
+        // Verificar se o caminho do arquivo foi salvo corretamente
+        $this->assertDatabaseHas('meeting_sessions', [
+            'appointment_id' => $appointment->id,
+            'referrals' => $expectedFilePath,
+        ]);
     }
 
     public function test_generate_atestado(): void
@@ -80,8 +92,17 @@ class MeetingSessionControllerTest extends TestCase
                 'meetingsession_id' => $meetingSession->id,
             ]);
 
-        $response->assertStatus(201);
-        $response->assertJson(['message' => 'Atestado gerado com sucesso!']);
+        $response->assertStatus(302);
+        $response->assertRedirect("/appointment/{$appointment->patient->name}/{$appointment->id}");
+
+        $meetingSession->refresh();
+
+        $expectedFilePath = 'storage/' . $psicologo->name . '/' . $appointment->patient->name . '/' . $appointment->date . '/atestado.docx';
+
+        $this->assertDatabaseHas('meeting_sessions', [
+            'appointment_id' => $appointment->id,
+            'attendance_certificates' => $expectedFilePath,
+        ]);
     }
 
     public function test_generate_info(): void
@@ -98,7 +119,16 @@ class MeetingSessionControllerTest extends TestCase
                 'meetinginfo' => 'Descrição da consulta',
             ]);
 
-        $response->assertStatus(201);
-        $response->assertJson(['message' => 'Informações sobre a consulta criada com sucesso!']);
+        $response->assertStatus(302);
+        $response->assertRedirect("/appointment/{$appointment->patient->name}/{$appointment->id}");
+
+        $meetingSession->refresh();
+
+        $expectedFilePath = 'storage/' . $psicologo->name . '/' . $appointment->patient->name . '/' . $appointment->date . '/info.docx';
+
+        $this->assertDatabaseHas('meeting_sessions', [
+            'appointment_id' => $appointment->id,
+            'meeting_annotation' => $expectedFilePath,
+        ]);
     }
 }
