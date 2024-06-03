@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm } from '@inertiajs/react';
+import { toast } from 'react-toastify';
 
 export default function Register() {
     const [isPsychologist, setIsPsychologist] = useState(false);
@@ -54,11 +55,28 @@ export default function Register() {
                     uf: data.uf,
                 }));
             } else {
-                alert('CEP não encontrado');
+                toast.error(`CEP não encontrado ou inválido!`, {
+                    position: "top-right",
+                    autoClose: 13000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
             }
         } catch (error) {
-            console.error('Erro ao buscar o CEP:', error);
-            alert('Erro ao buscar o CEP');
+            toast.error(`Erro ao buscar o CEP!`, {
+                position: "top-right",
+                autoClose: 13000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -74,8 +92,28 @@ export default function Register() {
         e.preventDefault();
         if (isPsychologist) {
             postPsychologist('/register-psicologo');
+            toast.success(`Psicólogo criado com sucesso!`, {
+                position: "top-right",
+                autoClose: 13000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         } else {
             postPatient('/register-paciente');
+            toast.success(`Paciente criado com sucesso!`, {
+                position: "top-right",
+                autoClose: 13000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
