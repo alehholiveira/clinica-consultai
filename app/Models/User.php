@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Appointment;
 
 class User extends Authenticatable
 {
@@ -18,8 +19,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
+        'logradouro',
+        'bairro',
+        'localidade',
+        'uf',
+        'celular',
+        'role'
     ];
 
     /**
@@ -44,4 +51,34 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function appointmentsAsPatient()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function appointmentsAsPsychologist()
+    {
+        return $this->hasMany(Appointment::class, 'psychologist_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            // Deleta as consultas onde o usuário é paciente
+            foreach ($user->appointmentsAsPatient as $appointment) {
+                $appointment->delete();
+            }
+
+            // Deleta as consultas onde o usuário é psicólogo
+            foreach ($user->appointmentsAsPsychologist as $appointment) {
+                $appointment->delete();
+            }
+        });
+    }
+
+
 }
