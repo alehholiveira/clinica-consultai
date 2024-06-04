@@ -124,7 +124,7 @@ npm i
 npm run build
 php artisan queue:listen
 ```
-### 9. Abrir outro terminal para executar o Electron
+### 10. Abrir outro terminal para executar o Electron
 
 Saia do pod e execute o comando abaixo para abrir a aplicação:
 
