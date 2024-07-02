@@ -1,12 +1,12 @@
 import { useEffect, FormEventHandler } from "react";
-import GuestLayout from "@/Layouts/GuestLayout";
+import LoginAppLayout from "@/Layouts/LoginAppLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { BiUser } from "react-icons/bi";
 import { AiOutlineLock } from "react-icons/ai";
 import InputError from "@/Components/InputError";
 import Checkbox from "@/Components/Checkbox";
 
-export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
+export default function LoginApp({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         username: '',
         password: '',
@@ -26,13 +26,13 @@ export default function Login({ status, canResetPassword }: { status?: string, c
     };
 
     return (
-        <GuestLayout>
+        <LoginAppLayout>
             <div className=" bg-white border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-100 relative">
                 <h1 className="text-4xl text-indigo-500 font-bold text-center mb-6">
-                    Bem-vindo ao Login!
+                    Bem-vindo ao Sistema ConsultAí!
                 </h1>
                 <form onSubmit={submit}>
-                    <div className="mt-12 relative">
+                    <div className=" mt-12 relative">
                         <input
                             id="username"
                             type="username"
@@ -91,6 +91,6 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     </button>
                 </form>
             </div>
-        </GuestLayout>
+        </LoginAppLayout>
     );
 }

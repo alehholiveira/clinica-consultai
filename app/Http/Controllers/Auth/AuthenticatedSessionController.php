@@ -16,9 +16,17 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function loginPatient(): Response
     {
         return Inertia::render('Auth/Login', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => session('status'),
+        ]);
+    }
+
+    public function loginApp(): Response
+    {
+        return Inertia::render('Auth/LoginApp', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
@@ -41,12 +49,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $auth = Auth::user();
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        if ($auth->role == 'secretaria') {
+            return redirect('/login-app');
+        } else if ($auth->role == 'psicologo'){
+            return redirect('/login-app');
+        } else {
+            return redirect('/');
+        }
     }
 }

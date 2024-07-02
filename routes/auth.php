@@ -18,8 +18,11 @@ use App\Http\Controllers\Auth\MeetingSessionController;
 
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+    Route::get('login', [AuthenticatedSessionController::class, 'loginPatient'])
         ->name('login');
+
+    Route::get('login-app', [AuthenticatedSessionController::class, 'loginApp'])
+        ->name('loginApp');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
@@ -39,12 +42,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'dashboard']) // rota para formulario de criar paciente
+    Route::get('dashboard', [DashboardController::class, 'dashboard']) // rota para dashboard
         ->name('dashboard');
 
     Route::post('/mark-patient-arrived', [DashboardController::class, 'markPatientArrived']);
 
-    Route::get('register', [RegisteredUserController::class, 'view']) // rota para formulario de criar paciente
+    Route::get('register', [RegisteredUserController::class, 'view']) // rota para formulario de criar paciente/psicologo
         ->name('register');
 
     Route::post('register-paciente', [RegisteredUserController::class, 'storePaciente']); // rota post para criar paciente
